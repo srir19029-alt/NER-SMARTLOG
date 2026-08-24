@@ -4,16 +4,20 @@ import requests
 from datetime import datetime
 from flask import Flask, render_template, request, jsonify, redirect, url_for, session
 from jinja2 import ChoiceLoader, FileSystemLoader
+
 # Automatic path detection
 BASE_DIR = os.path.abspath(os.path.dirname(__file__))
+
 app = Flask(__name__)
 app.secret_key = "ner-smartlog-secret-key-2026"
+
 # FIX: Automatically search both 'templates/' subfolder AND current directory
 app.jinja_loader = ChoiceLoader([
     FileSystemLoader(os.path.join(BASE_DIR, 'templates')),
     FileSystemLoader(BASE_DIR),
     FileSystemLoader('.')
 ])
+
 # ==========================================================
 # 1. 8 NORTH-EASTERN STATES REGIONAL DATA
 # ==========================================================
@@ -67,6 +71,7 @@ regions = [
         "key_hubs": ["Gangtok Terminal", "Rangpo Checkpoint", "Sevoke Corridor"]
     }
 ]
+
 # ==========================================================
 # 2. NER GEOGRAPHIC GAZETTEER
 # ==========================================================
@@ -105,6 +110,7 @@ NER_PLACES = {
     "namchi": {"name": "Namchi, Sikkim", "lat": 27.1667, "lon": 88.3500, "state": "Sikkim", "elev": "4,314 ft"},
     "siliguri": {"name": "Siliguri, Gateway", "lat": 26.7271, "lon": 88.3953, "state": "Sikkim Gateway", "elev": "400 ft"}
 }
+
 def geocode_place(query):
     if not query:
         return "Guwahati, Assam", 26.1445, 91.7362, "180 ft"
@@ -123,6 +129,7 @@ def geocode_place(query):
     except Exception:
         pass
     return "Guwahati, Assam", 26.1445, 91.7362, "180 ft"
+
 # ==========================================================
 # 3. CONVOY FLEET & GROUND INCIDENTS
 # ==========================================================
@@ -156,6 +163,7 @@ vehicles = [
         "status": "En Route to Clearance Zone", "fuel": "65%", "temp_controlled": "N/A"
     }
 ]
+
 incidents = [
     {
         "id": "DIS-9021", "type": "Active Landslide / Mudflow",
@@ -179,6 +187,7 @@ incidents = [
         "lat": 26.1150, "lon": 91.8600
     }
 ]
+
 # ==========================================================
 # 4. WEATHER TELEMETRY (OPEN-METEO)
 # ==========================================================
@@ -202,6 +211,7 @@ def get_8_states_weather():
                 wind = cur.get("wind_speed_10m", 14.0)
                 humidity = cur.get("relative_humidity_2m", 76)
                 risk = "HIGH" if (rain > 18 or "Arunachal" in reg["name"]) else ("MEDIUM" if rain > 5 else "LOW")
+
                 state_weather.append({
                     **reg,
                     "temperature": temp, "rain": rain, "wind_speed": wind,
@@ -210,6 +220,7 @@ def get_8_states_weather():
                 continue
         except Exception:
             pass
+
         state_weather.append({
             **reg,
             "temperature": 24.8, "rain": 12.4, "wind_speed": 15.0,
@@ -217,10 +228,12 @@ def get_8_states_weather():
             "risk": "LOW" if reg["code"] in ["AS", "MZ", "NL", "SK"] else "MEDIUM"
         })
     return state_weather
+
 def calculate_risk(rainfall, landslide, road, traffic, historical, travel_time):
     score = (rainfall * 0.30 + landslide * 0.25 + road * 0.20 + traffic * 0.10 + historical * 0.10 + travel_time * 0.05)
     level = "LOW" if score <= 30 else ("MEDIUM" if score <= 60 else ("HIGH" if score <= 80 else "CRITICAL"))
     return round(score, 1), level
+
 # ==========================================================
 # 5. MULTI-ROUTE ENGINE
 # ==========================================================
@@ -229,9 +242,12 @@ def find_routes():
     data = request.get_json(silent=True) or {}
     origin_query = data.get("origin", "Guwahati, Assam")
     dest_query = data.get("destination", "Tawang, Arunachal")
+
     o_name, o_lat, o_lon, o_elev = geocode_place(origin_query)
     d_name, d_lat, d_lon, d_elev = geocode_place(dest_query)
+
     generated_routes = []
+
     try:
         url = f"https://router.project-osrm.org/route/v1/driving/{o_lon},{o_lat};{d_lon},{d_lat}?overview=full&geometries=geojson&alternatives=3"
         res = requests.get(url, timeout=3)
@@ -241,10 +257,12 @@ def find_routes():
                 dist_km = round(r["distance"] / 1000, 1)
                 dur_hrs = round(r["duration"] / 3600, 1)
                 coords = [[lat, lon] for lon, lat in r["geometry"]["coordinates"]]
+
                 is_mountain = any(st in (o_name+d_name).lower() for st in ["arunachal", "sikkim", "meghalaya", "mizoram", "nagaland"])
                 base_slope = 50 if is_mountain else 25
                 slope_risk = base_slope + (idx * 15)
                 score, level = calculate_risk(35.0, slope_risk, 30 + (idx * 18), 30, 25, 30)
+
                 generated_routes.append({
                     "id": f"ROUTE-{idx+1}",
                     "name": f"Corridor {chr(65+idx)}: {'Primary Highway' if idx==0 else 'Strategic Bypass ' + str(idx)}",
@@ -255,11 +273,14 @@ def find_routes():
                 })
     except Exception:
         pass
+
     if not generated_routes:
         direct_dist = round(math.sqrt((d_lat - o_lat)**2 + (d_lon - o_lon)**2) * 111 * 1.35, 1)
         base_dur = max(0.5, round(direct_dist / 42, 1))
+
         coords_1 = [[o_lat, o_lon], [(o_lat+d_lat)/2 + 0.08, (o_lon+d_lon)/2 - 0.08], [d_lat, d_lon]]
         coords_2 = [[o_lat, o_lon], [(o_lat+d_lat)/2 - 0.12, (o_lon+d_lon)/2 + 0.15], [d_lat, d_lon]]
+
         generated_routes.append({
             "id": "ROUTE-1", "name": f"Corridor A (Primary Trunk Highway via {o_name.split(',')[0]})",
             "origin": o_name, "destination": d_name, "distance": f"{direct_dist} km",
@@ -272,23 +293,28 @@ def find_routes():
             "eta": f"{math.floor(base_dur * 1.15)}h {int(((base_dur*1.15)%1)*60)}m", "score": 28.4, "risk": "LOW",
             "status": "Clear & AI Recommended", "elevation_max": "3,400 ft", "coordinates": coords_2
         })
+
     best_route = min(generated_routes, key=lambda r: r["score"])
+
     return jsonify({
         "origin": {"name": o_name, "lat": o_lat, "lon": o_lon, "elev": o_elev},
         "destination": {"name": d_name, "lat": d_lat, "lon": d_lon, "elev": d_elev},
         "routes": generated_routes, "best_route_id": best_route["id"],
         "ai_analysis": f"AI computed {len(generated_routes)} corridors. {best_route['name']} has the lowest hazard score ({best_route['score']}/100)."
     })
+
 # ==========================================================
-# 6. VEHICLE TRACKER & AI CHAT
+# 6. VEHICLE TRACKER & STRICTLY FINE-TUNED AI CHATBOT
 # ==========================================================
 @app.route("/api/track-vehicle", methods=["POST"])
 def track_vehicle():
     data = request.get_json(silent=True) or {}
     v_id = data.get("vehicle_id", "").strip().upper()
+
     for v in vehicles:
         if v["id"].upper() == v_id or v_id in v["id"].upper():
             return jsonify({"status": "found", "vehicle": v})
+
     gen_vehicle = {
         "id": v_id if v_id else "NER-CONVOY-LIVE", "carrier": "Emergency Regional Relief Truck",
         "driver": "Duty Officer (+91 98765-00112)", "cargo": "Essential Medical & Food Relief",
@@ -297,27 +323,119 @@ def track_vehicle():
         "status": "In Transit (Telemetry Live)", "fuel": "80%", "temp_controlled": "Active"
     }
     return jsonify({"status": "found", "vehicle": gen_vehicle})
+
+# STRICT DOMAIN GUARDRAILS: Allowed keywords & intent scopes
+NER_DOMAIN_KEYWORDS = [
+    "ner", "smartlog", "logistics", "route", "corridor", "highway", "pass", "nh-",
+    "assam", "arunachal", "meghalaya", "manipur", "mizoram", "nagaland", "tripura", "sikkim",
+    "guwahati", "tawang", "bomdila", "sela", "shillong", "cherrapunji", "imphal", "aizawl", "kohima", "gangtok", "siliguri",
+    "weather", "rain", "temperature", "wind", "humidity", "monsoon", "mudflow", "landslide", "flood", "disaster", "hazard",
+    "truck", "convoy", "vehicle", "fleet", "driver", "cargo", "vaccine", "oxygen", "grain", "fci", "bro", "sdma", "ndrf",
+    "speed", "eta", "status", "risk", "score", "mdoner", "sih", "26002", "how", "what is", "about", "help", "hello", "hi", "namaste"
+]
+
 @app.route("/api/chat", methods=["POST"])
 def api_chat():
     data = request.get_json(silent=True) or {}
-    msg = data.get("message", "").lower().strip()
-    if any(w in msg for w in ["hi", "hello", "namaste", "help"]):
-        reply = "👋 **Namaste! I am NER-SMARTBOT**, your AI Logistics & Hazard Assistant for North East India (MDoNER / SIH PS-26002).\n\nAsk me about routes, weather, or convoys!"
-    elif "from" in msg and "to" in msg:
-        parts = msg.split("to")
+    user_msg = data.get("message", "").strip()
+    if not user_msg:
+        return jsonify({"reply": "Please enter a question regarding NER logistics, corridors, or hazards."})
+
+    msg_low = user_msg.lower()
+    gemini_key = os.environ.get("GEMINI_API_KEY", "").strip()
+
+    # Scope Restriction Refusal Message
+    out_of_scope_reply = (
+        "🛡️ **NER-SMARTBOT Scope Notice:**\n\n"
+        "I am fine-tuned **strictly for NER-SMARTLOG** (MDoNER / SIH PS-26002). I only answer queries regarding:\n"
+        "• 🛣️ **8-State Highway Corridors & Mountain Bypasses** (e.g. *'Find route from Guwahati to Tawang'*)\n"
+        "• ⛰️ **Live Landslide & Flood Hazard Telemetry** (e.g. *'Active hazards on NH-13'*)\n"
+        "• 🌦️ **Real-World 8-State Weather Conditions** (e.g. *'Rainfall in Meghalaya'*)\n"
+        "• 🚚 **Emergency Convoy & Medical Fleet Tracking** (e.g. *'Track truck NER-MED-01'*)\n\n"
+        "*(I cannot answer general trivia, movies, sports, or coding questions outside this project.)*"
+    )
+
+    # 1. Check with Real LLM (Gemini) using Strict Domain System Prompt & Guardrails
+    if gemini_key:
+        try:
+            active_incidents_text = "; ".join([f"{inc['type']} at {inc['location']} (Severity: {inc['severity']}, Desc: {inc.get('description', '')})" for inc in incidents])
+            active_convoys_text = "; ".join([f"{v['id']} ({v['cargo']}) from {v['origin']} to {v['destination']}, Status: {v['status']}, Speed: {v['speed']}" for v in vehicles])
+
+            system_prompt = (
+                "You are NER-SMARTBOT, an elite domain-constrained AI copilot for the NER-SMARTLOG portal "
+                "(Ministry of Development of North Eastern Region - MDoNER | SIH 26002).\n\n"
+                "STRICT SCOPE POLICY & GUARDRAILS:\n"
+                "1. You MUST ONLY answer questions related to:\n"
+                "   - What this website/portal is working for (NER street logistics, landslide prediction, hazard alerts, disaster response).\n"
+                "   - The 8 North Eastern states (Assam, Arunachal Pradesh, Meghalaya, Manipur, Mizoram, Nagaland, Tripura, Sikkim).\n"
+                "   - Routes, mountain passes, highways (NH-10, NH-13, NH-29, NH-37, NH-6, Sela Pass, Bomdila, etc.).\n"
+                "   - Real-world weather telemetry, rainfall, landslide risk scores, and BRO road clearance.\n"
+                "   - Convoy tracking (vaccines, medical oxygen, food grain).\n"
+                "2. If the user asks ANY question unrelated to this website or NER logistics (such as general knowledge, movies, celebrities, coding in other languages, sports, cooking, politics, or random chat), YOU MUST REFUSE politely and state your strict focus on NER-SMARTLOG.\n\n"
+                f"CURRENT REAL-TIME CONTEXT:\n"
+                f"• Active Ground Hazards: {active_incidents_text}\n"
+                f"• Active Priority Convoys: {active_convoys_text}\n\n"
+                "Style: Concise, professional, bullet points, using emojis (🚚, ⛰️, 🌦️, ⚠️, 🛡️)."
+            )
+
+            url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key={gemini_key}"
+            payload = {
+                "contents": [
+                    {"role": "user", "parts": [{"text": f"{system_prompt}\n\nUser Question: {user_msg}"}]}
+                ]
+            }
+            res = requests.post(url, json=payload, timeout=6)
+            if res.status_code == 200:
+                result = res.json()
+                reply_text = result["candidates"][0]["content"]["parts"][0]["text"]
+                return jsonify({"reply": reply_text})
+        except Exception as e:
+            print(f"Gemini API fallback: {e}")
+
+    # 2. Strict Rule-Based Domain Filter (For Built-In Engine)
+    is_domain_related = any(k in msg_low for k in NER_DOMAIN_KEYWORDS)
+    if not is_domain_related and len(msg_low.split()) > 1:
+        return jsonify({"reply": out_of_scope_reply})
+
+    # Domain-specific responses
+    if any(w in msg_low for w in ["what is", "about", "website", "project", "work", "purpose", "who are you"]):
+        reply = (
+            "🚚 **About NER-SMARTLOG (SIH PS-26002):**\n\n"
+            "This portal is an **AI-powered Street Logistics & Real-Time Hazard Intelligence System** developed for **MDoNER** (Ministry of Development of North Eastern Region).\n\n"
+            "**Key Capabilities:**\n"
+            "• 🛣️ **Predictive Route Engine:** Calculates multi-corridor mountain bypasses evaluated against live landslide & rain risk scores.\n"
+            "• 🌦️ **8-State Weather Feeds:** Continuous meteorological telemetry across Assam, Arunachal, Meghalaya, Manipur, Mizoram, Nagaland, Tripura, and Sikkim.\n"
+            "• 🛰️ **Priority Relief Fleet Telemetry:** Live GPS monitoring for emergency vaccine, oxygen, and grain convoys.\n"
+            "• 🚨 **BRO Field Incident Terminal:** Ground damage reporting and clearance timeline broadcasting."
+        )
+    elif any(w in msg_low for w in ["hi", "hello", "namaste", "help"]):
+        reply = (
+            "👋 **Namaste! I am NER-SMARTBOT**, your AI Logistics & Hazard Assistant for North East India.\n\n"
+            "Ask me about:\n"
+            "• 🛣️ *'Find route from Guwahati to Tawang'*\n"
+            "• 🌦️ *'What is the weather in Shillong or Cherrapunji?'*\n"
+            "• 🚚 *'Track medicine truck NER-MED-01'*\n"
+            "• ⛰️ *'Landslide status near Bomdila or Sela Pass'*"
+        )
+    elif "from" in msg_low and "to" in msg_low:
+        parts = msg_low.split("to")
         orig = parts[0].replace("from", "").replace("find route", "").strip()
         dest = parts[1].strip()
-        reply = f"🛣️ **AI Multi-Corridor Computed for {orig.title()} ➔ {dest.title()}** with terrain hazard analysis. View the Mission Control Dashboard!"
-    elif any(w in msg for w in ["tawang", "bomdila", "arunachal", "sela"]):
-        reply = "⛰️ **Arunachal High-Altitude Alert:** NH-13 near Bomdila Pass KM 142 has **Active Mudflow** (Risk: HIGH). Detour recommended via Sela Tunnel Alternative."
-    elif any(w in msg for w in ["weather", "rain", "temperature"]):
-        reply = "🌦️ **Real-World 8-State Weather Online:** Connected to Open-Meteo. Switch to the **Real-World 8-State Weather** tab!"
-    elif any(w in msg for w in ["track", "convoy", "truck", "med"]):
+        reply = f"🛣️ **AI Corridor Computed for {orig.title()} ➔ {dest.title()}:** Real-time precipitation and terrain gradient cost index evaluated. Check the Mission Control GIS Visualizer!"
+    elif any(w in msg_low for w in ["tawang", "bomdila", "arunachal", "sela"]):
+        reply = "⛰️ **Arunachal High-Altitude Alert:** NH-13 near Bomdila Pass KM 142 has **Active Mudflow** (Risk: HIGH). Detour recommended via **Sela Tunnel / Kalaktang Bypass**."
+    elif any(w in msg_low for w in ["weather", "rain", "temperature", "cloud"]):
+        reply = "🌦️ **Real-World 8-State Weather Online:** State-wise meteorological telemetry is active via Open-Meteo. Switch to the **Real-World 8-State Weather** tab!"
+    elif any(w in msg_low for w in ["track", "convoy", "truck", "med", "oxygen", "fleet"]):
         v = vehicles[0]
         reply = f"🚚 **Convoy [{v['id']}]:** Mission: {v['carrier']} ({v['cargo']}) | Speed: **{v['speed']}** | ETA: **{v['eta']}** | Status: **{v['status']}**."
+    elif any(w in msg_low for w in ["landslide", "flood", "disaster", "hazard", "bro"]):
+        reply = f"🚨 **Active Field Incidents:** Currently tracking **{len(incidents)} ground hazards**, including Landslide on NH-13 (Arunachal) and Tunnel Flooding on NH-6 (Meghalaya). Check the Ground Disaster Stream!"
     else:
-        reply = f"🤖 **NER-SMARTBOT:** Query logged. Try: *'Find route from Guwahati to Tawang'* or *'Track vehicle NER-MED-01'*."
+        reply = out_of_scope_reply
+
     return jsonify({"reply": reply})
+
 @app.route("/submit-disaster-report", methods=["POST"])
 def submit_disaster_report():
     new_inc = {
@@ -332,6 +450,7 @@ def submit_disaster_report():
     }
     incidents.insert(0, new_inc)
     return redirect(url_for("home"))
+
 # ==========================================================
 # 7. ROUTING & CONTROLLERS
 # ==========================================================
@@ -343,16 +462,20 @@ def login_page():
         session["show_vehicle_modal"] = True
         return redirect(url_for("home"))
     return render_template("index.html", is_login=True)
+
 @app.route("/logout")
 def logout():
     session.clear()
     return redirect(url_for("login_page"))
+
 @app.route("/")
 def home():
     if "user" not in session:
         return redirect(url_for("login_page"))
+
     states_weather = get_8_states_weather()
     show_modal = session.pop("show_vehicle_modal", False)
+
     return render_template(
         "index.html",
         is_login=False,
@@ -365,6 +488,7 @@ def home():
         places=NER_PLACES,
         timestamp=datetime.now().strftime("%d-%b-%Y %H:%M:%S IST")
     )
+
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 5000))
     print(f"🚀 NER-SMARTLOG Mission Control running on http://127.0.0.1:{port}")
