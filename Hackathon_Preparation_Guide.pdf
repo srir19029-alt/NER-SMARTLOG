@@ -1,0 +1,260 @@
+%PDF-1.4
+1 0 obj
+<< /Type /Catalog /Pages 2 0 R >>
+endobj
+2 0 obj
+<< /Type /Pages /Kids [3 0 R 6 0 R 9 0 R] /Count 3 >>
+endobj
+3 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 595.28 841.89] /Contents 4 0 R /Resources << /Font << /F1 12 0 R /F2 13 0 R >> >> >>
+endobj
+4 0 obj
+<< /Length 2680 >>
+stream
+q
+0.06 0.15 0.35 rg
+36 780 523 3 re f
+Q
+BT
+/F2 18 Tf 22 TL 36 750 Td
+(Hackathon Preparation Guide) Tj T*
+/F2 10 Tf 14 TL
+0.01 0.52 0.78 rg
+(NER-SMARTLOG: AI Street Logistics & Hazard Intelligence Portal) Tj T*
+/F1 8.5 Tf 11 TL
+0.39 0.45 0.55 rg
+(Smart India Hackathon 2026  |  Problem Statement 26002  |  Ministry of Development of NER [MDoNER]) Tj T*
+0 0 0 rg
+T*
+/F2 11 Tf 14 TL
+0.12 0.23 0.54 rg
+(1. EXECUTIVE PROJECT SUMMARY) Tj T*
+/F1 8 Tf 11 TL
+0.15 0.20 0.30 rg
+(NER-SMARTLOG is an AI-powered predictive logistics and road hazard telemetry portal engineered specifically) Tj T*
+(for the 8 North Eastern states (Assam, Arunachal Pradesh, Meghalaya, Manipur, Mizoram, Nagaland, Tripura, and) Tj T*
+(Sikkim). It provides automated risk assessment, live weather telemetry, mountain corridor re-routing, and) Tj T*
+(synchronized field-to-headquarters disaster dispatch to prevent critical supply-chain paralysis (vaccines, oxygen,) Tj T*
+(relief grain) caused by monsoonal landslides, mudflows, flash floods, and alpine road washouts.) Tj T*
+T*
+/F2 9.5 Tf 12 TL
+0.01 0.52 0.78 rg
+(Core System Specifications:) Tj T*
+/F1 7.5 Tf 10.5 TL
+0.20 0.25 0.35 rg
+(  * Problem Statement ID  : SIH 26002 [Ministry of Development of North Eastern Region - MDoNER]) Tj T*
+(  * Strategic Corridors   : NH-10 [Sikkim], NH-13 [Arunachal Sela Corridor], NH-29 [Nagaland], NH-37 & NH-6 [Assam/Meghalaya]) Tj T*
+(  * Primary Personas/Roles: 1) BRO Ground Patrol Officer | 2) Convoy Logistics Commander | 3) SDMA Disaster Controller) Tj T*
+(  * Core Technology Stack : Python Flask, Jinja ChoiceLoader, OSRM Graph Engine, Open-Meteo NWP API, Leaflet.js GIS) Tj T*
+T*
+/F2 11 Tf 14 TL
+0.12 0.23 0.54 rg
+(2. MATHEMATICAL HAZARD RISK MODEL & SCORING EQUATION) Tj T*
+/F1 8 Tf 11 TL
+0.15 0.20 0.30 rg
+(The AI decision engine evaluates corridor segments using a weighted multi-factor vulnerability equation:) Tj T*
+/F2 8.5 Tf 11.5 TL
+0.01 0.40 0.65 rg
+(  Risk Score = (0.30 x R) + (0.25 x L) + (0.20 x S) + (0.10 x T) + (0.10 x H) + (0.05 x E)) Tj T*
+/F1 7.5 Tf 10 TL
+0.25 0.30 0.40 rg
+(  Where: R = Precipitation [mm/hr] | L = Landslide & Geological Slope Gradient | S = Ground Passability [BRO Alert]) Tj T*
+(         T = Traffic Density | H = Historical Hazard Frequency | E = Altitude & Elevation Fog Index) Tj T*
+(  Thresholds: 0-30: LOW [Clear] | 31-60: MEDIUM [Single-lane] | 61-80: HIGH [Caution] | 81-100: CRITICAL [Auto-Reroute]) Tj T*
+T*
+/F2 11 Tf 14 TL
+0.12 0.23 0.54 rg
+(3. TECHNICAL ARCHITECTURAL HIGHLIGHTS) Tj T*
+/F1 8 Tf 10.5 TL
+0.15 0.20 0.30 rg
+(  * ChoiceLoader Template Resolution: Prevents TemplateNotFound by searching templates/, base dir, and working root.) Tj T*
+(  * Embedded NER Gazetteer: 33 pre-indexed Himalayan transit nodes with automatic fallback to Nominatim Geocoder.) Tj T*
+(  * Hybrid Routing Pipeline: Primary OSRM driving graph with geometric spline fallback ensuring 100% path generation.) Tj T*
+(  * Live NWP Meteorological Telemetry: Direct REST integration with Open-Meteo models polling all 8 state capital hubs.) Tj T*
+(  * NER-SMARTBOT Natural Language Engine: Dynamic intent extraction answering routes, convoy speed, and alerts in <80ms.) Tj T*
+ET
+q
+0.80 0.85 0.90 rg
+36 38 523 0.5 re f
+Q
+BT
+/F1 7 Tf 9 TL 36 28 Td
+0.40 0.45 0.55 rg
+(NER-SMARTLOG  |  Hackathon Preparation Guide  |  SIH PS-26002  |  Confidential  |  Page 1 of 3) Tj
+ET
+endstream
+endobj
+5 0 obj
+<< >>
+endobj
+6 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 595.28 841.89] /Contents 7 0 R /Resources << /Font << /F1 12 0 R /F2 13 0 R >> >> >>
+endobj
+7 0 obj
+<< /Length 2620 >>
+stream
+q
+0.06 0.15 0.35 rg
+36 805 523 1 re f
+Q
+BT
+/F2 8.5 Tf 10 TL 36 812 Td
+0.30 0.35 0.45 rg
+(NER-SMARTLOG  |  Hackathon Preparation Guide (SIH PS-26002)) Tj
+T*
+0 0 0 rg
+T*
+/F2 11 Tf 14 TL
+0.12 0.23 0.54 rg
+(4. HACKATHON EVALUATION & VIVA QUESTIONS (PART 1)) Tj T*
+T*
+/F2 8.5 Tf 11 TL 0.01 0.52 0.78 rg (CATEGORY A: DOMAIN, BASIC CONTEXT & USP) Tj T*
+/F2 8 Tf 10.5 TL 0.05 0.10 0.20 rg (Q1. What makes NER-SMARTLOG fundamentally innovative compared to Google Maps?) Tj T*
+/F1 7.5 Tf 10 TL 0.15 0.20 0.30 rg
+(Ans: Commercial navigation apps optimize strictly for shortest driving time based on current traffic speed. In the Himalayas,) Tj T*
+(     roads show 'clear' until a sudden landslide strikes. NER-SMARTLOG is predictive: it evaluates precipitation rates,) Tj T*
+(     soil saturation, and verified BRO alerts to steer relief convoys onto safer mountain bypasses before roads get choked.) Tj T*
+T*
+/F2 8 Tf 10.5 TL 0.05 0.10 0.20 rg (Q2. What are the three command roles and their distinct access permissions?) Tj T*
+/F1 7.5 Tf 10 TL 0.15 0.20 0.30 rg
+(Ans: 1) Field Patrol Officer [BRO]: Rapid logging of active landslides, floods, and road clearance timelines.) Tj T*
+(     2) Convoy Logistics Commander: Fleet GPS tracking [vaccines/oxygen], cargo manifests, and AI route planner.) Tj T*
+(     3) State Disaster Controller [SDMA]: Regional threat overview, multi-state coordination, and early warning dispatch.) Tj T*
+T*
+/F2 8.5 Tf 11 TL 0.01 0.52 0.78 rg (CATEGORY B: ALGORITHMIC & TECHNICAL ARCHITECTURE) Tj T*
+/F2 8 Tf 10.5 TL 0.05 0.10 0.20 rg (Q3. How does the AI routing engine compute and select the safest alternative corridor?) Tj T*
+/F1 7.5 Tf 10 TL 0.15 0.20 0.30 rg
+(Ans: The system queries OSRM for candidate driving corridors, applies the Multi-Factor Risk Equation to each polyline,) Tj T*
+(     and dynamically scores them. If the primary highway exceeds Risk > 60 [e.g. NH-13 slide], the engine promotes the) Tj T*
+(     safest mountain bypass [e.g. Sela Tunnel Bypass] as the 'AI Optimal Corridor' with green telemetry highlight.) Tj T*
+T*
+/F2 8 Tf 10.5 TL 0.05 0.10 0.20 rg (Q4. How does Jinja ChoiceLoader eliminate TemplateNotFound errors?) Tj T*
+/F1 7.5 Tf 10 TL 0.15 0.20 0.30 rg
+(Ans: By binding ChoiceLoader([FileSystemLoader('templates/'), FileSystemLoader(BASE_DIR), FileSystemLoader('.')]),) Tj T*
+(     Flask reliably discovers templates whether placed in a subfolder or root, regardless of the working execution path.) Tj T*
+T*
+/F2 8.5 Tf 11 TL 0.01 0.52 0.78 rg (CATEGORY C: HARDWARE, CONNECTIVITY & OFFLINE ARCHITECTURE) Tj T*
+/F2 8 Tf 10.5 TL 0.05 0.10 0.20 rg (Q5. How does the platform function in zero-connectivity mountain blackspots?) Tj T*
+/F1 7.5 Tf 10 TL 0.15 0.20 0.30 rg
+(Ans: Through an Offline-First design: 1) Pre-cached vector map tiles and routing graphs stored locally before departure.) Tj T*
+(     2) Cellular Fallback: When 4G/5G drops, the vehicle unit transmits compressed status packets via SMS/USSD gateways.) Tj T*
+T*
+/F2 8.5 Tf 11 TL 0.01 0.52 0.78 rg (CATEGORY D: WORKING, VERIFICATION & SECURITY) Tj T*
+/F2 8 Tf 10.5 TL 0.05 0.10 0.20 rg (Q6. How does the system prevent fake disaster reports from civilian users?) Tj T*
+/F1 7.5 Tf 10 TL 0.15 0.20 0.30 rg
+(Ans: Role-Based Cryptographic Access Control [RBAC]. Only verified personnel with authenticated Department Badge IDs) Tj T*
+(     [BRO Taskforce, NDRF, SDMA] hold broadcast permissions, ensuring verified, noise-free incident feeds.) Tj T*
+ET
+q
+0.80 0.85 0.90 rg
+36 38 523 0.5 re f
+Q
+BT
+/F1 7 Tf 9 TL 36 28 Td
+0.40 0.45 0.55 rg
+(NER-SMARTLOG  |  Hackathon Preparation Guide  |  SIH PS-26002  |  Confidential  |  Page 2 of 3) Tj
+ET
+endstream
+endobj
+8 0 obj
+<< >>
+endobj
+9 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 595.28 841.89] /Contents 10 0 R /Resources << /Font << /F1 12 0 R /F2 13 0 R >> >> >>
+endobj
+10 0 obj
+<< /Length 2600 >>
+stream
+q
+0.06 0.15 0.35 rg
+36 805 523 1 re f
+Q
+BT
+/F2 8.5 Tf 10 TL 36 812 Td
+0.30 0.35 0.45 rg
+(NER-SMARTLOG  |  Hackathon Preparation Guide (SIH PS-26002)) Tj
+T*
+0 0 0 rg
+T*
+/F2 11 Tf 14 TL
+0.12 0.23 0.54 rg
+(5. HACKATHON EVALUATION & VIVA QUESTIONS (PART 2)) Tj T*
+T*
+/F2 8.5 Tf 11 TL 0.01 0.52 0.78 rg (CATEGORY E: LIMITATIONS & EDGE CASES) Tj T*
+/F2 8 Tf 10.5 TL 0.05 0.10 0.20 rg (Q7. What are the current limitations of the prototype?) Tj T*
+/F1 7.5 Tf 10 TL 0.15 0.20 0.30 rg
+(Ans: 1) Public Open-Meteo NWP spatial resolution is 1-2 km; narrow Himalayan gorges can benefit from localized IoT rain gauges.) Tj T*
+(     2) Real-time civilian crowd-sourcing is restricted to prevent spam, relying on verified agency patrol logging.) Tj T*
+T*
+/F2 8.5 Tf 11 TL 0.01 0.52 0.78 rg (CATEGORY F: DIFFICULT JUDGE QUESTIONS & COUNTER-DEFENSES) Tj T*
+/F2 8 Tf 10.5 TL 0.05 0.10 0.20 rg (Q8. Judge: 'What if OSRM server goes offline or encounters a routing timeout?') Tj T*
+/F1 7.5 Tf 10 TL 0.15 0.20 0.30 rg
+(Ans: We built an integrated Geometric Spline Fallback Generator in app.py. If OSRM fails to respond within 3 seconds, the) Tj T*
+(     engine generates trigonometric spline corridors between geocoded coordinates, guaranteeing 100% uptime for drivers.) Tj T*
+T*
+/F2 8.5 Tf 11 TL 0.01 0.52 0.78 rg (CATEGORY G: SUSTAINABILITY, COST & FUTURE SCOPE) Tj T*
+/F2 8 Tf 10.5 TL 0.05 0.10 0.20 rg (Q9. How is the project scalable and sustainable for state governments?) Tj T*
+/F1 7.5 Tf 10 TL 0.15 0.20 0.30 rg
+(Ans: Built 100% on open-source technologies [Python, Leaflet, OpenStreetMap, Open-Meteo], eliminating recurring GIS licenses.) Tj T*
+(     Future Roadmap: Phase 2: Direct API tie-in with ISRO Bhuvan/MOSDAC landslide susceptibility satellite maps;) Tj T*
+(     Phase 3: Hardwired OBD-II IoT transponders with satellite SOS beacons across state health & FCI fleets.) Tj T*
+T*
+/F2 11 Tf 14 TL
+0.12 0.23 0.54 rg
+(6. QUICK-REVISION ELEVATOR PITCHES) Tj T*
+/F2 8.5 Tf 11 TL 0.01 0.52 0.78 rg (30-Second Elevator Pitch:) Tj T*
+/F1 7.5 Tf 10 TL 0.15 0.20 0.30 rg
+(\"NER-SMARTLOG is an AI street logistics and hazard intelligence portal built for MDoNER [SIH 26002]. Unlike reactive GPS apps,) Tj T*
+(our platform combines live meteorological sensor feeds, geological risk scoring, and verified ground BRO telemetry to) Tj T*
+(predict landslides and re-route essential convoys across 8 North-Eastern states before they get stranded.\") Tj T*
+T*
+/F2 8.5 Tf 11 TL 0.01 0.52 0.78 rg (1-Minute Comprehensive Pitch:) Tj T*
+/F1 7.5 Tf 10 TL 0.15 0.20 0.30 rg
+(\"Respected Judges, in North East India, a single monsoon landslide cuts off life-saving oxygen, vaccines, and food supplies) Tj T*
+(to remote communities for days. Current navigation tools only show red traffic lines after a corridor is already blocked.) Tj T*
+(NER-SMARTLOG solves this by introducing a predictive multi-tier intelligence grid. Our AI router evaluates live rainfall) Tj T*
+(volume, slope gradient, and BRO ground reports using a weighted risk index to compute hazard-resilient bypass corridors.) Tj T*
+(Featuring dedicated dashboards for BRO Field Patrols, Logistics Commanders, and SDMA Disaster Cells, NER-SMARTLOG transforms) Tj T*
+(fragile mountain roads into resilient, life-saving supply lifelines.\") Tj T*
+ET
+q
+0.80 0.85 0.90 rg
+36 38 523 0.5 re f
+Q
+BT
+/F1 7 Tf 9 TL 36 28 Td
+0.40 0.45 0.55 rg
+(NER-SMARTLOG  |  Hackathon Preparation Guide  |  SIH PS-26002  |  Confidential  |  Page 3 of 3) Tj
+ET
+endstream
+endobj
+11 0 obj
+<< >>
+endobj
+12 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica >>
+endobj
+13 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica-Bold >>
+endobj
+xref
+0 14
+0000000000 65535 f 
+0000000009 00000 n 
+0000000058 00000 n 
+0000000133 00000 n 
+0000000270 00000 n 
+0000003010 00000 n 
+0000003032 00000 n 
+0000003169 00000 n 
+0000005849 00000 n 
+0000005871 00000 n 
+0000006009 00000 n 
+0000008669 00000 n 
+0000008691 00000 n 
+0000008764 00000 n 
+trailer
+<< /Size 14 /Root 1 0 R >>
+startxref
+8842
+%%EOF

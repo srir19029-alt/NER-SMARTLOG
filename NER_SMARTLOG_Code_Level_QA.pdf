@@ -1,0 +1,225 @@
+%PDF-1.4
+1 0 obj
+<< /Type /Catalog /Pages 2 0 R >>
+endobj
+2 0 obj
+<< /Type /Pages /Kids [3 0 R 6 0 R 9 0 R] /Count 3 >>
+endobj
+3 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 595.28 841.89] /Contents 4 0 R /Resources << /Font << /F1 12 0 R /F2 13 0 R >> >> >>
+endobj
+4 0 obj
+<< /Length 2620 >>
+stream
+q
+0.06 0.15 0.35 rg
+36 780 523 3 re f
+Q
+BT
+/F2 16 Tf 20 TL 36 750 Td
+(NER-SMARTLOG | Code-Level Technical Q&A Guide) Tj T*
+/F2 9.5 Tf 13 TL
+0.01 0.52 0.78 rg
+(Line-by-Line Python & HTML/JS Code Analysis for Hackathon / Viva Defense) Tj T*
+/F1 8 Tf 10.5 TL
+0.39 0.45 0.55 rg
+(Smart India Hackathon 2026 | Problem Statement: 26002 | Ministry of Development of North Eastern Region) Tj T*
+0 0 0 rg
+T*
+/F2 11 Tf 14 TL
+0.12 0.23 0.54 rg
+(SECTION 1: PYTHON BACKEND CODE ANALYSIS (app.py)) Tj T*
+T*
+/F2 8.5 Tf 11 TL 0.01 0.52 0.78 rg (1. Flask App Initialization & ChoiceLoader (Lines 1-18)) Tj T*
+/F2 8 Tf 10.5 TL 0.05 0.10 0.20 rg (Q1: Why did you use 'jinja2.ChoiceLoader' instead of standard Flask template lookup?) Tj T*
+/F1 7.5 Tf 10 TL 0.15 0.20 0.30 rg
+(Ans: Standard Flask only looks in a hardcoded 'templates/' subfolder. If the project is executed from different parent directories) Tj T*
+(     or has index.html in the root, Jinja throws TemplateNotFound. ChoiceLoader chains FileSystemLoader([BASE_DIR/templates,) Tj T*
+(     BASE_DIR, '.']), ensuring 100% template resolution across any directory structure.) Tj T*
+T*
+/F2 8.5 Tf 11 TL 0.01 0.52 0.78 rg (2. Gazetteer & Geocoding Logic (Lines 74-125)) Tj T*
+/F2 8 Tf 10.5 TL 0.05 0.10 0.20 rg (Q2: How does the 'geocode_place(query)' function work and why is it resilient?) Tj T*
+/F1 7.5 Tf 10 TL 0.15 0.20 0.30 rg
+(Ans: It uses a 2-tier geocoding architecture: 1) In-memory NER_PLACES dictionary (33 pre-indexed Himalayan hubs like Tawang,) Tj T*
+(     Bomdila, Shillong, Cherrapunji) with O(1) latency. 2) Fallback to OpenStreetMap Nominatim REST API if an unknown place is queried.) Tj T*
+(     If both fail/timeout, it gracefully defaults to Guwahati Hub (26.1445, 91.7362), preventing server crashes.) Tj T*
+T*
+/F2 8.5 Tf 11 TL 0.01 0.52 0.78 rg (3. Open-Meteo Weather Telemetry (Lines 185-235)) Tj T*
+/F2 8 Tf 10.5 TL 0.05 0.10 0.20 rg (Q3: Explain the 'get_8_states_weather()' function and how it classifies risk.) Tj T*
+/F1 7.5 Tf 10 TL 0.15 0.20 0.30 rg
+(Ans: It queries Open-Meteo NWP forecast API for all 8 state capital coordinates (current temp, rain, wind_speed, humidity).) Tj T*
+(     WMO weather codes (0=Clear, 51-80=Rain, 95+=Thunderstorm) map to conditions. Risk is dynamically assigned: HIGH if) Tj T*
+(     rain > 18mm or high landslide-prone zone (Arunachal), MEDIUM if rain > 5mm, else LOW. Offline fallbacks ensure continuous UI feed.) Tj T*
+T*
+/F2 8.5 Tf 11 TL 0.01 0.52 0.78 rg (4. Multi-Factor Risk Calculation Engine (Lines 237-242)) Tj T*
+/F2 8 Tf 10.5 TL 0.05 0.10 0.20 rg (Q4: Explain the weights and formula in 'calculate_risk()'.) Tj T*
+/F1 7.5 Tf 10 TL 0.15 0.20 0.30 rg
+(Ans: Formula: Score = (0.30*Rain) + (0.25*Landslide) + (0.20*Road) + (0.10*Traffic) + (0.10*Historical) + (0.05*TravelTime).) Tj T*
+(     Precipitation (0.30) and Landslide slope (0.25) have the highest weight because monsoonal rainfall on steep hills is the primary) Tj T*
+(     trigger for road washouts in the North East. Thresholds: <=30: LOW, <=60: MEDIUM, <=80: HIGH, >80: CRITICAL.) Tj T*
+ET
+q
+0.80 0.85 0.90 rg
+36 38 523 0.5 re f
+Q
+BT
+/F1 7 Tf 9 TL 36 28 Td
+0.40 0.45 0.55 rg
+(NER-SMARTLOG  |  Code-Level Technical Q&A Guide  |  SIH PS-26002  |  Confidential  |  Page 1 of 3) Tj
+ET
+endstream
+endobj
+5 0 obj
+<< >>
+endobj
+6 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 595.28 841.89] /Contents 7 0 R /Resources << /Font << /F1 12 0 R /F2 13 0 R >> >> >>
+endobj
+7 0 obj
+<< /Length 2600 >>
+stream
+q
+0.06 0.15 0.35 rg
+36 805 523 1 re f
+Q
+BT
+/F2 8.5 Tf 10 TL 36 812 Td
+0.30 0.35 0.45 rg
+(NER-SMARTLOG  |  Code-Level Technical Q&A Guide (SIH PS-26002)) Tj
+T*
+0 0 0 rg
+T*
+/F2 11 Tf 14 TL
+0.12 0.23 0.54 rg
+(SECTION 2: PYTHON API ROUTING & BACKEND LOGIC (app.py)) Tj T*
+T*
+/F2 8.5 Tf 11 TL 0.01 0.52 0.78 rg (5. Route Optimization Endpoint '/api/find-routes' (Lines 245-345)) Tj T*
+/F2 8 Tf 10.5 TL 0.05 0.10 0.20 rg (Q5: How does '/api/find-routes' handle routing and what is the fallback mechanism?) Tj T*
+/F1 7.5 Tf 10 TL 0.15 0.20 0.30 rg
+(Ans: 1) It calls OSRM driving API with 'alternatives=3' and extracts geojson coordinates, distances, and durations.) Tj T*
+(     2) Scores each route using calculate_risk(). 3) If OSRM fails/timeouts, it triggers the Geometric Spline Generator) Tj T*
+(     calculating 3 alternative coordinate arcs between origin and destination. 4) Selects best_route using:) Tj T*
+(     'min(generated_routes, key=lambda r: r[\"score\"])', returning JSON with AI recommendation summary.) Tj T*
+T*
+/F2 8.5 Tf 11 TL 0.01 0.52 0.78 rg (6. Vehicle Tracking & AI Chatbot Endpoints (Lines 347-410)) Tj T*
+/F2 8 Tf 10.5 TL 0.05 0.10 0.20 rg (Q6: How do '/api/track-vehicle' and '/api/chat' operate?) Tj T*
+/F1 7.5 Tf 10 TL 0.15 0.20 0.30 rg
+(Ans: '/api/track-vehicle' searches the vehicles dataset by registration number (NER-MED-01, NER-OXY-09). If not found,) Tj T*
+(     it generates a live simulated convoy profile to guarantee uninterrupted UX.) Tj T*
+(     '/api/chat' performs semantic keyword extraction ('from...to', 'tawang', 'weather', 'track'), querying real-time backend state) Tj T*
+(     and returning formatted markdown string advisories in under 20ms.) Tj T*
+T*
+/F2 8.5 Tf 11 TL 0.01 0.52 0.78 rg (7. Disaster Reporting & Session Controllers (Lines 412-465)) Tj T*
+/F2 8 Tf 10.5 TL 0.05 0.10 0.20 rg (Q7: Explain the data flow in '/submit-disaster-report' and session authentication.) Tj T*
+/F1 7.5 Tf 10 TL 0.15 0.20 0.30 rg
+(Ans: '/submit-disaster-report' parses form inputs, assigns a unique incident ID ('DIS-' + len), sets coordinates,) Tj T*
+(     and prepends the incident to the incidents list so the newest hazard appears at the top. It then redirects to '/'. ) Tj T*
+(     '/login' establishes cryptographically signed session cookies ('session[\"user\"]', 'session[\"role\"]').) Tj T*
+(     '/' checks 'user not in session' -> redirects to login, otherwise renders index.html with live weather and incident data.) Tj T*
+ET
+q
+0.80 0.85 0.90 rg
+36 38 523 0.5 re f
+Q
+BT
+/F1 7 Tf 9 TL 36 28 Td
+0.40 0.45 0.55 rg
+(NER-SMARTLOG  |  Code-Level Technical Q&A Guide  |  SIH PS-26002  |  Confidential  |  Page 2 of 3) Tj
+ET
+endstream
+endobj
+8 0 obj
+<< >>
+endobj
+9 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 595.28 841.89] /Contents 10 0 R /Resources << /Font << /F1 12 0 R /F2 13 0 R >> >> >>
+endobj
+10 0 obj
+<< /Length 2600 >>
+stream
+q
+0.06 0.15 0.35 rg
+36 805 523 1 re f
+Q
+BT
+/F2 8.5 Tf 10 TL 36 812 Td
+0.30 0.35 0.45 rg
+(NER-SMARTLOG  |  Code-Level Technical Q&A Guide (SIH PS-26002)) Tj
+T*
+0 0 0 rg
+T*
+/F2 11 Tf 14 TL
+0.12 0.23 0.54 rg
+(SECTION 3: HTML, CSS & JAVASCRIPT FRONTEND ANALYSIS (index.html)) Tj T*
+T*
+/F2 8.5 Tf 11 TL 0.01 0.52 0.78 rg (8. Single-File Unified View Architecture (Lines 40-160)) Tj T*
+/F2 8 Tf 10.5 TL 0.05 0.10 0.20 rg (Q8: How does index.html toggle between Login and Dashboard views in a single file?) Tj T*
+/F1 7.5 Tf 10 TL 0.15 0.20 0.30 rg
+(Ans: Jinja2 conditional inline styles control display: '#auth-view' uses 'display: {% if is_login or not user %}flex{% else %}none{% endif %}',) Tj T*
+(     while '#dashboard-view' uses 'display: {% if not is_login and user %}flex{% else %}none{% endif %}'. This eliminates multi-file) Tj T*
+(     template fragmentation and allows seamless state transitions.) Tj T*
+T*
+/F2 8.5 Tf 11 TL 0.01 0.52 0.78 rg (9. Leaflet.js GIS Mapping & Telemetry Layers (Lines 530-620)) Tj T*
+/F2 8 Tf 10.5 TL 0.05 0.10 0.20 rg (Q9: How are map layers, alternative polylines, and convoy animations rendered in JS?) Tj T*
+/F1 7.5 Tf 10 TL 0.15 0.20 0.30 rg
+(Ans: 1) 'initMap()' creates the Leaflet instance centered at [26.2, 92.8] (NER centroid) and initializes 'routeLayerGroup' and) Tj T*
+(     'markerLayerGroup'. 2) 'executeRouteFinder()' clears previous layers, plots Green Origin and Red Destination circle markers,) Tj T*
+(     draws alternative polylines (Green weight 6 for AI Best Route, Blue weight 4 for alternatives), and calls) Tj T*
+(     'map.flyToBounds(featureGroup.getBounds(), {padding: [40, 40]})' for smooth cinematic bounding.) Tj T*
+(     3) 'submitVehicleTrack()' performs 'map.flyTo([v.lat, v.lon], 11, {duration: 1.5})' to focus directly on convoy coordinates.) Tj T*
+T*
+/F2 8.5 Tf 11 TL 0.01 0.52 0.78 rg (10. 1-Click Judge Instant Login Function (Lines 505-515)) Tj T*
+/F2 8 Tf 10.5 TL 0.05 0.10 0.20 rg (Q10: How does the 'quickDemoLogin(user, role)' JavaScript function work?) Tj T*
+/F1 7.5 Tf 10 TL 0.15 0.20 0.30 rg
+(Ans: It dynamically populates the login form fields ('login-username', 'login-password', 'login-role') with pre-authenticated demo) Tj T*
+(     credentials and immediately triggers 'form.submit()', enabling hackathon judges to test any role with 1 click in under 1 second.) Tj T*
+T*
+/F2 11 Tf 14 TL
+0.12 0.23 0.54 rg
+(SECTION 4: RAPID VIVA SUMMARY FOR JUDGES) Tj T*
+/F1 7.5 Tf 10 TL 0.15 0.20 0.30 rg
+(• Frontend Tech : Leaflet.js 1.9.4, HTML5, CSS3 Variables, Asynchronous Fetch API, Glassmorphic UI.) Tj T*
+(• Backend Tech  : Python 3.13, Flask 3.x, Jinja2 ChoiceLoader, Open-Meteo REST API, OSRM Routing Engine.) Tj T*
+(• Key Innovation: Predictive Hazard Cost Scoring (Rain + Slope + BRO Alert) vs. Reactive Commercial Traffic Speed.) Tj T*
+ET
+q
+0.80 0.85 0.90 rg
+36 38 523 0.5 re f
+Q
+BT
+/F1 7 Tf 9 TL 36 28 Td
+0.40 0.45 0.55 rg
+(NER-SMARTLOG  |  Code-Level Technical Q&A Guide  |  SIH PS-26002  |  Confidential  |  Page 3 of 3) Tj
+ET
+endstream
+endobj
+11 0 obj
+<< >>
+endobj
+12 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica >>
+endobj
+13 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica-Bold >>
+endobj
+xref
+0 14
+0000000000 65535 f 
+0000000009 00000 n 
+0000000058 00000 n 
+0000000133 00000 n 
+0000000270 00000 n 
+0000002950 00000 n 
+0000002972 00000 n 
+0000003109 00000 n 
+0000005769 00000 n 
+0000005791 00000 n 
+0000005929 00000 n 
+0000008589 00000 n 
+0000008611 00000 n 
+0000008684 00000 n 
+trailer
+<< /Size 14 /Root 1 0 R >>
+startxref
+8762
+%%EOF

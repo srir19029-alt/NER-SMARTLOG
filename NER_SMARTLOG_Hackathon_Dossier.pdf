@@ -1,0 +1,148 @@
+%PDF-1.4
+1 0 obj
+<< /Type /Catalog /Pages 2 0 R >>
+endobj
+2 0 obj
+<< /Type /Pages /Kids [3 0 R] /Count 1 >>
+endobj
+3 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 612 792] /Contents 4 0 R /Resources << /Font << /F1 5 0 R >> >> >>
+endobj
+4 0 obj
+<< /Length 2640 >>
+stream
+BT
+/F1 11 Tf
+14 TL
+40 750 Td
+(NER-SMARTLOG | Hackathon Executive Summary & Judges Q&A Guide) Tj
+T*
+/F1 9 Tf
+(Smart India Hackathon 2026 - Problem Statement 26002 | Ministry of Development of NER [MDoNER]) Tj
+T*
+(------------------------------------------------------------------------------------------------------------------------------------------------) Tj
+T*
+T*
+/F1 10 Tf
+(1. EXECUTIVE PROJECT SUMMARY) Tj
+T*
+/F1 8.5 Tf
+(NER-SMARTLOG is an AI-powered predictive logistics and road hazard telemetry portal engineered for the 8) Tj
+T*
+(North Eastern states (Assam, Arunachal Pradesh, Meghalaya, Manipur, Mizoram, Nagaland, Tripura, and Sikkim).) Tj
+T*
+(It resolves critical supply chain bottlenecks (vaccines, oxygen, food relief) during severe monsoon landslides and floods.) Tj
+T*
+T*
+/F1 9 Tf
+(KEY SYSTEM INNOVATIONS:) Tj
+T*
+/F1 8.5 Tf
+(* Predictive Multi-Corridor AI Router: Computes and ranks alternative mountain detours against a dynamic Risk Index.) Tj
+T*
+(* Real-Time 8-State Weather Telemetry: Live Open-Meteo NWP sensor integration for all NER states and Himalayan passes.) Tj
+T*
+(* Multi-Role Command Matrix: Specialized interfaces for Ground Patrol (BRO), Logistics Commanders, & SDMA Disaster Cells.) Tj
+T*
+(* NER-SMARTBOT AI Assistant: Instant natural language copilot for road passability and convoy status.) Tj
+T*
+T*
+/F1 9 Tf
+(MATHEMATICAL RISK SCORING FORMULA:) Tj
+T*
+/F1 8.5 Tf
+(Risk Score = (0.30 x Rain) + (0.25 x Landslide) + (0.20 x Road_Status) + (0.10 x Traffic) + (0.10 x History) + (0.05 x Elevation)) Tj
+T*
+(  - 0 to 30   : LOW RISK (Highway Open & Clear)) Tj
+T*
+(  - 31 to 60  : MEDIUM RISK (Single-lane Caution / Minor Mudflow)) Tj
+T*
+(  - 61 to 80  : HIGH RISK (Active Hazard / Rockfall Warning)) Tj
+T*
+(  - 81 to 100 : CRITICAL RISK (Road Blocked - Automated AI Detour Reroute Triggered)) Tj
+T*
+(------------------------------------------------------------------------------------------------------------------------------------------------) Tj
+T*
+T*
+/F1 10 Tf
+(2. TOP HACKATHON JUDGING QUESTIONS & WINNING ANSWERS) Tj
+T*
+/F1 9 Tf
+(Q1. What is the core innovation of NER-SMARTLOG over Google Maps?) Tj
+T*
+/F1 8.5 Tf
+(Ans: Commercial navigation apps optimize strictly for shortest driving time based on current traffic. In the Himalayas,) Tj
+T*
+(     roads look clear until a sudden landslide strikes. NER-SMARTLOG evaluates predictive geological & meteorological risk) Tj
+T*
+(     (rainfall rate, slope gradient, verified BRO alerts) to proactively reroute relief convoys before they enter hazard zones.) Tj
+T*
+T*
+/F1 9 Tf
+(Q2. How does the system operate in remote mountain areas with zero internet connectivity?) Tj
+T*
+/F1 8.5 Tf
+(Ans: Convoys use an Offline-First architecture with pre-cached vector maps. In cellular black zones, the telemetry) Tj
+T*
+(     unit falls back to SMS/USSD compressed encrypted status packets to maintain grid connectivity.) Tj
+T*
+T*
+/F1 9 Tf
+(Q3. Where is the live weather telemetry sourced from?) Tj
+T*
+/F1 8.5 Tf
+(Ans: Directly from Open-Meteo High-Resolution Numerical Weather Prediction (NWP) API across all 8 state nodes.) Tj
+T*
+T*
+/F1 9 Tf
+(Q4. Explain the routing algorithm. How do you generate alternative corridors?) Tj
+T*
+/F1 8.5 Tf
+(Ans: The engine runs a hybrid pipeline: 1) OSRM driving graph produces candidate corridor polygons; 2) The multi-factor) Tj
+T*
+(     Risk Score formula is applied. If the primary highway exceeds Risk > 60, the AI automatically selects the safest detour.) Tj
+T*
+T*
+/F1 9 Tf
+(Q5. How does the system ensure authentic disaster reports?) Tj
+T*
+/F1 8.5 Tf
+(Ans: We enforce Role-Based Access Control (RBAC). Only verified personnel with Department Badge IDs (BRO, NDRF, SDMA)) Tj
+T*
+(     have broadcast privileges, preventing false civilian alarms.) Tj
+T*
+(------------------------------------------------------------------------------------------------------------------------------------------------) Tj
+T*
+T*
+/F1 10 Tf
+(3. 60-SECOND ELEVATOR PITCH FOR JUDGES) Tj
+T*
+/F1 8.5 Tf
+("Respected Judges, in North East India, a landslide doesn't just block a road - it cuts off life-saving oxygen, vaccines,) Tj
+T*
+(and emergency food supplies to remote border communities. Commercial navigation only reacts after a road is blocked.) Tj
+T*
+(NER-SMARTLOG is the first predictive street logistics and hazard telemetry portal built specifically for MDoNER. By fusing) Tj
+T*
+(live weather sensor feeds, geological risk scoring, and verified ground BRO telemetry, our AI engine detects impending) Tj
+T*
+(corridor failures and re-routes relief convoys before they get stranded.") Tj
+ET
+endstream
+endobj
+5 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica >>
+endobj
+xref
+0 6
+0000000000 65535 f 
+0000000009 00000 n 
+0000000058 00000 n 
+0000000115 00000 n 
+0000000244 00000 n 
+0000002958 00000 n 
+trailer
+<< /Size 6 /Root 1 0 R >>
+startxref
+3037
+%%EOF
