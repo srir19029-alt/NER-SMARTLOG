@@ -1,0 +1,159 @@
+NER-SMARTLOG KNOWLEDGE BASE
+
+PROJECT
+NER-SMARTLOG is a smart logistics and disaster-awareness system focused on
+Northeast India. The system helps users understand transportation,
+logistics, weather awareness, routes, and disaster-related risks.
+
+REGION
+NER-SMARTLOG covers the eight states of Northeast India:
+
+1. Assam
+2. Arunachal Pradesh
+3. Meghalaya
+4. Manipur
+5. Mizoram
+6. Nagaland
+7. Tripura
+8. Sikkim
+
+ASSAM
+Capital: Dispur
+Major city: Guwahati
+
+Logistics considerations:
+- Guwahati is an important transportation and logistics hub for Northeast India.
+- Major roads and highways connect Assam with other northeastern states.
+- Heavy rainfall and flooding can affect transportation.
+- Road conditions should be checked before long-distance logistics operations.
+
+ARUNACHAL PRADESH
+Capital: Itanagar
+
+Logistics considerations:
+- Mountainous terrain can make transportation challenging.
+- Heavy rainfall can increase the risk of landslides.
+- Road conditions can change rapidly in mountainous areas.
+- Logistics planning should include alternative routes where possible.
+
+MEGHALAYA
+Capital: Shillong
+
+Logistics considerations:
+- Meghalaya has mountainous terrain and receives significant rainfall.
+- Heavy rainfall can create landslide and road-disruption risks.
+- Logistics operators should consider weather conditions before travelling through vulnerable areas.
+
+MANIPUR
+Capital: Imphal
+
+Logistics considerations:
+- Imphal is an important logistics and transportation centre.
+- Mountainous terrain and weather conditions can affect transportation.
+- Route conditions should be verified before making operational decisions.
+
+MIZORAM
+Capital: Aizawl
+
+Logistics considerations:
+- Mizoram has predominantly hilly terrain.
+- Heavy rainfall can increase landslide risks.
+- Transport planning should consider terrain, weather and road conditions.
+
+NAGALAND
+Capital: Kohima
+
+Logistics considerations:
+- Nagaland has mountainous terrain.
+- Rainfall can affect road conditions.
+- Logistics planning should account for possible delays and route disruptions.
+
+TRIPURA
+Capital: Agartala
+
+Logistics considerations:
+- Agartala is an important transportation centre.
+- Heavy rainfall can affect roads and transportation.
+- Logistics operators should check current road and weather conditions.
+
+SIKKIM
+Capital: Gangtok
+
+Logistics considerations:
+- Sikkim has mountainous terrain.
+- Landslides and heavy rainfall can affect transportation.
+- Mountain roads may require additional travel planning.
+- Current road conditions should be verified before critical logistics operations.
+
+GENERAL LOGISTICS GUIDANCE
+
+For logistics operations in Northeast India:
+
+- Check current weather conditions before travel.
+- Check current road and traffic conditions.
+- Consider alternative routes for important shipments.
+- Allow additional travel time in mountainous areas.
+- Pay special attention to heavy rainfall and landslide risks.
+- Do not assume that a road is open or closed without current information.
+- Use live data sources whenever available.
+- For emergency logistics, prioritize verified information from authoritative sources.
+
+WEATHER
+
+Weather can affect logistics operations through:
+- Heavy rainfall
+- Flooding
+- Landslides
+- Reduced visibility
+- Road damage
+- Delays
+
+The chatbot must NOT invent current weather information.
+
+If a user asks for current weather, the chatbot should use the application's
+live weather data/API when available.
+
+ROAD CONDITIONS
+
+The chatbot should distinguish between:
+1. General information about a route.
+2. Current/live road conditions.
+
+The chatbot must not claim that a road is currently blocked, open, damaged,
+or safe unless current data confirms it.
+
+DISASTER AWARENESS
+
+Common hazards that can affect transportation in Northeast India include:
+- Floods
+- Landslides
+- Heavy rainfall
+- Road damage
+- Bridge disruption
+- Poor visibility
+- Mountain-road hazards
+
+During disaster-related logistics:
+- Verify current conditions.
+- Identify alternative routes.
+- Prioritize emergency and relief supplies.
+- Avoid making unsupported claims about road accessibility.
+- Clearly communicate uncertainty.
+
+NER-SMARTBOT BEHAVIOUR
+
+The chatbot should:
+- Be helpful and concise.
+- Focus on Northeast India logistics.
+- Explain information in simple language.
+- Help users plan logistics operations.
+- Mention risks when relevant.
+- Ask for the state, city, route, or destination when necessary.
+- Clearly distinguish general knowledge from live information.
+
+The chatbot should NOT:
+- Invent road closures.
+- Invent current weather.
+- Invent emergency situations.
+- Claim to have live information when it does not.
+- Present uncertain information as confirmed fact.
