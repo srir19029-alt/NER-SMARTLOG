@@ -4,6 +4,7 @@ import requests
 from datetime import datetime
 from flask import Flask, render_template, request, jsonify, redirect, url_for, session
 from jinja2 import ChoiceLoader, FileSystemLoader
+from chatbot import ask_gemini
 
 # Automatic path detection
 BASE_DIR = os.path.abspath(os.path.dirname(__file__))
@@ -328,82 +329,38 @@ def track_vehicle():
 def api_chat():
     data = request.get_json(silent=True) or {}
     user_msg = data.get("message", "").strip()
+
     if not user_msg:
-        return jsonify({"reply": "Namaste! Please ask a question about North East weather, routes, convoys, or hazards."})
+        return jsonify({
+            "reply": "Namaste! Please ask me about Northeast India logistics, routes, weather, convoys, or hazards."
+        })
+
+    # Try Gemini AI first
+    ai_reply = ask_gemini(
+        user_msg,
+        incidents=incidents,
+        vehicles=vehicles
+    )
+
+    if ai_reply:
+        return jsonify({
+            "reply": ai_reply
+        })
+
+    # ------------------------------------------------------
+    # FALLBACK CHATBOT
+    # Works even if Gemini is unavailable
+    # ------------------------------------------------------
 
     msg_low = user_msg.lower()
-    gemini_key = os.environ.get("GEMINI_API_KEY", "").strip()
 
-    # 1. Real LLM (Gemini) if API key is provided
-    if gemini_key:
-        try:
-            all_weather = get_8_states_weather()
-            weather_text = "; ".join([f"{w['name']}: {w['temperature']}°C, {w['rain']}mm rain ({w['condition']}, Risk: {w['risk']})" for w in all_weather])
-            incidents_text = "; ".join([f"{inc['type']} at {inc['location']} (Severity: {inc['severity']})" for inc in incidents])
-            convoys_text = "; ".join([f"{v['id']} ({v['cargo']}) moving {v['origin']}->{v['destination']}, Speed: {v['speed']}" for v in vehicles])
-
-            system_prompt = (
-                "You are NER-SMARTBOT, an elite AI logistics & hazard telemetry copilot for North East India (MDoNER / SIH PS-26002).\n\n"
-                "IMPORTANT INSTRUCTION: Always answer questions DIRECTLY with full metrics inside this chat message.\n\n"
-                f"CURRENT LIVE 8-STATE WEATHER DATA:\n{weather_text}\n\n"
-                f"CURRENT ACTIVE ROAD HAZARDS:\n{incidents_text}\n\n"
-                f"CURRENT ACTIVE CONVOYS:\n{convoys_text}\n"
-            )
-
-            url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key={gemini_key}"
-            payload = {"contents": [{"role": "user", "parts": [{"text": f"{system_prompt}\n\nUser Question: {user_msg}"}]}]}
-            res = requests.post(url, json=payload, timeout=6)
-            if res.status_code == 200:
-                result = res.json()
-                reply_text = result["candidates"][0]["content"]["parts"][0]["text"]
-                return jsonify({"reply": reply_text})
-        except Exception as e:
-            print(f"Gemini API fallback: {e}")
-
-    # 2. DIRECT WEATHER METRICS PRINTED IN CHAT
-    if any(w in msg_low for w in ["weather", "rain", "temperature", "temp", "climate", "forecast", "humidity", "wind"]):
-        all_weather = get_8_states_weather()
-        
-        # Check single state request
-        matched_state = None
-        for w in all_weather:
-            if w["name"].lower() in msg_low or w["code"].lower() in msg_low.split() or w["capital"].lower() in msg_low:
-                matched_state = w
-                break
-        
-        if not matched_state:
-            for p_key, p_val in NER_PLACES.items():
-                if p_key in msg_low:
-                    st_name = p_val["state"].split()[0]
-                    for w in all_weather:
-                        if st_name.lower() in w["name"].lower():
-                            matched_state = w
-                            break
-                    if matched_state:
-                        break
-
-        if matched_state:
-            reply = (
-                f"🌦️ **Live Weather Telemetry for {matched_state['name']} ({matched_state['capital']}):**\n\n"
-                f"• 🌡️ **Temperature:** {matched_state['temperature']}°C\n"
-                f"• 🌧️ **Precipitation:** {matched_state['rain']} mm/hr\n"
-                f"• 💨 **Wind Speed:** {matched_state['wind_speed']} km/h\n"
-                f"• 💧 **Humidity:** {matched_state['humidity']}%\n"
-                f"• ⛅ **Sky Condition:** {matched_state['condition']}\n"
-                f"• ⚠️ **Road Risk Level:** **{matched_state['risk']}** ({matched_state['weather_zone']})"
-            )
-        else:
-            lines = []
-            for w in all_weather:
-                icon = "🔴" if w['risk'] == "HIGH" else ("🟡" if w['risk'] == "MEDIUM" else "🟢")
-                lines.append(f"{icon} **{w['name']}:** {w['temperature']}°C | {w['rain']} mm rain | {w['condition']} | Risk: **{w['risk']}**")
-            
-            reply = (
-                "🌦️ **Live Weather Telemetry Across All 8 North Eastern States:**\n\n" +
-                "\n".join(lines) +
-                "\n\n*(Telemetry updated via Open-Meteo High-Resolution NWP Gateway)*"
-            )
-        return jsonify({"reply": reply})
+    if any(word in msg_low for word in [
+        "hi", "hello", "namaste", "hey", "help", "start"
+    ]):
+        reply = (
+            "👋 **Namaste! I am NER-SMARTBOT.**\n\n"
+            "I can help with:\n"
+            "• 🛣
 
     # 3. DIRECT CONVOY TRACKING PRINTED IN CHAT
     if any(w in msg_low for w in ["track", "convoy", "truck", "med", "oxygen", "grain", "fleet", "vehicle"]):
