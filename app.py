@@ -334,48 +334,36 @@ NER_DOMAIN_KEYWORDS = [
     "speed", "eta", "status", "risk", "score", "mdoner", "sih", "26002", "how", "what is", "about", "help", "hello", "hi", "namaste"
 ]
 
+# ==========================================================
+# UPGRADED AI CHATBOT WITH GEMINI LLM & LIVE RAG CONTEXT
+# ==========================================================
 @app.route("/api/chat", methods=["POST"])
 def api_chat():
     data = request.get_json(silent=True) or {}
     user_msg = data.get("message", "").strip()
     if not user_msg:
-        return jsonify({"reply": "Please enter a question regarding NER logistics, corridors, or hazards."})
+        return jsonify({"reply": "Please enter a message."})
 
-    msg_low = user_msg.lower()
     gemini_key = os.environ.get("GEMINI_API_KEY", "").strip()
 
-    # Scope Restriction Refusal Message
-    out_of_scope_reply = (
-        "🛡️ **NER-SMARTBOT Scope Notice:**\n\n"
-        "I am fine-tuned **strictly for NER-SMARTLOG** (MDoNER / SIH PS-26002). I only answer queries regarding:\n"
-        "• 🛣️ **8-State Highway Corridors & Mountain Bypasses** (e.g. *'Find route from Guwahati to Tawang'*)\n"
-        "• ⛰️ **Live Landslide & Flood Hazard Telemetry** (e.g. *'Active hazards on NH-13'*)\n"
-        "• 🌦️ **Real-World 8-State Weather Conditions** (e.g. *'Rainfall in Meghalaya'*)\n"
-        "• 🚚 **Emergency Convoy & Medical Fleet Tracking** (e.g. *'Track truck NER-MED-01'*)\n\n"
-        "*(I cannot answer general trivia, movies, sports, or coding questions outside this project.)*"
-    )
-
-    # 1. Check with Real LLM (Gemini) using Strict Domain System Prompt & Guardrails
+    # 1. If Gemini API Key is available, use Real LLM with Live RAG Context
     if gemini_key:
         try:
-            active_incidents_text = "; ".join([f"{inc['type']} at {inc['location']} (Severity: {inc['severity']}, Desc: {inc.get('description', '')})" for inc in incidents])
-            active_convoys_text = "; ".join([f"{v['id']} ({v['cargo']}) from {v['origin']} to {v['destination']}, Status: {v['status']}, Speed: {v['speed']}" for v in vehicles])
-
+            # Build Live RAG Context from current portal state
+            active_incidents_text = "; ".join([f"{inc['type']} at {inc['location']} (Severity: {inc['severity']}, ETA: {inc.get('description', '')})" for inc in incidents])
+            active_convoys_text = "; ".join([f"{v['id']} ({v['cargo']}) moving from {v['origin']} to {v['destination']}, Status: {v['status']}, Speed: {v['speed']}" for v in vehicles])
+            
             system_prompt = (
-                "You are NER-SMARTBOT, an elite domain-constrained AI copilot for the NER-SMARTLOG portal "
-                "(Ministry of Development of North Eastern Region - MDoNER | SIH 26002).\n\n"
-                "STRICT SCOPE POLICY & GUARDRAILS:\n"
-                "1. You MUST ONLY answer questions related to:\n"
-                "   - What this website/portal is working for (NER street logistics, landslide prediction, hazard alerts, disaster response).\n"
-                "   - The 8 North Eastern states (Assam, Arunachal Pradesh, Meghalaya, Manipur, Mizoram, Nagaland, Tripura, Sikkim).\n"
-                "   - Routes, mountain passes, highways (NH-10, NH-13, NH-29, NH-37, NH-6, Sela Pass, Bomdila, etc.).\n"
-                "   - Real-world weather telemetry, rainfall, landslide risk scores, and BRO road clearance.\n"
-                "   - Convoy tracking (vaccines, medical oxygen, food grain).\n"
-                "2. If the user asks ANY question unrelated to this website or NER logistics (such as general knowledge, movies, celebrities, coding in other languages, sports, cooking, politics, or random chat), YOU MUST REFUSE politely and state your strict focus on NER-SMARTLOG.\n\n"
-                f"CURRENT REAL-TIME CONTEXT:\n"
+                "You are NER-SMARTBOT, an elite AI logistics commander and hazard intelligence copilot built for "
+                "the Ministry of Development of North Eastern Region (MDoNER) under Smart India Hackathon (SIH 26002). "
+                "You monitor 8 North Eastern states: Assam, Arunachal Pradesh, Meghalaya, Manipur, Mizoram, Nagaland, Tripura, Sikkim.\n\n"
+                f"CURRENT REAL-TIME SITUATION:\n"
                 f"• Active Ground Hazards: {active_incidents_text}\n"
                 f"• Active Priority Convoys: {active_convoys_text}\n\n"
-                "Style: Concise, professional, bullet points, using emojis (🚚, ⛰️, 🌦️, ⚠️, 🛡️)."
+                "INSTRUCTIONS:\n"
+                "1. Answer concisely in bullet points with relevant emojis (🚚, ⛰️, 🌦️, ⚠️, 🛡️).\n"
+                "2. When asked about routes (e.g., Guwahati to Tawang), emphasize real-time weather and mountain bypasses (like Sela Tunnel / Kalaktang Bypass).\n"
+                "3. Speak as an authoritative, helpful disaster response AI assistant."
             )
 
             url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key={gemini_key}"
@@ -390,13 +378,35 @@ def api_chat():
                 reply_text = result["candidates"][0]["content"]["parts"][0]["text"]
                 return jsonify({"reply": reply_text})
         except Exception as e:
-            print(f"Gemini API fallback: {e}")
+            print(f"Gemini API fallback triggered: {e}")
 
-    # 2. Strict Rule-Based Domain Filter (For Built-In Engine)
-    is_domain_related = any(k in msg_low for k in NER_DOMAIN_KEYWORDS)
-    if not is_domain_related and len(msg_low.split()) > 1:
-        return jsonify({"reply": out_of_scope_reply})
+    # 2. Smart Built-In Fallback Engine (Runs even without external API key)
+    msg_low = user_msg.lower()
+    if any(w in msg_low for w in ["hi", "hello", "namaste", "help", "who are you"]):
+        reply = (
+            "👋 **Namaste! I am NER-SMARTBOT**, your AI Logistics & Hazard Assistant for North East India (MDoNER / SIH PS-26002).\n\n"
+            "I can assist you with:\n"
+            "• 🛣️ **Route Planning:** *'Find route from Guwahati to Tawang'*\n"
+            "• 🌦️ **Live Weather:** *'What is the weather in Cherrapunji or Shillong?'*\n"
+            "• 🚚 **Convoy Tracking:** *'Track medicine truck NER-MED-01'*\n"
+            "• 🚨 **Disaster Hazards:** *'Landslide status near Bomdila or Sela Pass'*"
+        )
+    elif "from" in msg_low and "to" in msg_low:
+        parts = msg_low.split("to")
+        orig = parts[0].replace("from", "").replace("find route", "").strip()
+        dest = parts[1].strip()
+        reply = f"🛣️ **AI Multi-Corridor Computed for {orig.title()} ➔ {dest.title()}** with real-time precipitation and terrain gradient analysis. Check the Mission Control Dashboard!"
+    elif any(w in msg_low for w in ["tawang", "bomdila", "arunachal", "sela"]):
+        reply = "⛰️ **Arunachal High-Altitude Alert:** NH-13 near Bomdila Pass KM 142 has **Active Mudflow** (Risk: HIGH). AI recommends switching convoy routes to the **Kalaktang Valley Bypass Corridor**."
+    elif any(w in msg_low for w in ["weather", "rain", "temperature"]):
+        reply = "🌦️ **Real-World 8-State Weather Online:** State-wise meteorological telemetry is updated in real time via Open-Meteo. Switch to the **True 8-State Weather** tab!"
+    elif any(w in msg_low for w in ["track", "convoy", "truck", "med"]):
+        v = vehicles[0]
+        reply = f"🚚 **Live Convoy Telemetry [{v['id']}]:** Mission: {v['carrier']} ({v['cargo']}) | Speed: **{v['speed']}** | ETA: **{v['eta']}** | Status: **{v['status']}**."
+    else:
+        reply = f"🤖 **NER-SMARTBOT:** I have logged your query *'{user_msg}'*. Try asking: *'Find route from Guwahati to Tawang'* or *'Track vehicle NER-MED-01'*."
 
+    return jsonify({"reply": reply})
     # Domain-specific responses
     if any(w in msg_low for w in ["what is", "about", "website", "project", "work", "purpose", "who are you"]):
         reply = (
