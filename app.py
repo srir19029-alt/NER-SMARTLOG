@@ -346,7 +346,7 @@ def api_chat():
                 "FOCUS:\n"
                 "- 8 North Eastern states (Assam, Arunachal Pradesh, Meghalaya, Manipur, Mizoram, Nagaland, Tripura, Sikkim).\n"
                 "- Mountain highway bypasses, real-time landslide risk scoring, live Open-Meteo weather, and relief convoys.\n"
-                "- If the user asks something completely outside North East India or logistics (e.g. movies, celebrities), politely remind them of your focus.\n\n"
+                "- Answer questions accurately about live weather, routes, and convoys.\n\n"
                 f"LIVE CONTEXT:\n"
                 f"• Active Incidents: {active_incidents_text}\n"
                 f"• Active Convoys: {active_convoys_text}\n"
@@ -362,9 +362,72 @@ def api_chat():
         except Exception as e:
             print(f"Gemini API fallback: {e}")
 
-    # 2. Rich Domain Engine (Answers hundreds of natural queries immediately)
+    # 2. SMART LIVE WEATHER LOOKUP (Returns exact real-time numbers)
+    if any(w in msg_low for w in ["weather", "rain", "temperature", "temp", "climate", "forecast", "humidity", "wind"]):
+        all_weather = get_8_states_weather()
+        
+        # Check if user asked about a specific state
+        matched_state = None
+        for w in all_weather:
+            if w["name"].lower() in msg_low or w["code"].lower() == msg_low or w["capital"].lower() in msg_low:
+                matched_state = w
+                break
+        
+        # Also check places
+        if not matched_state:
+            for p_key, p_val in NER_PLACES.items():
+                if p_key in msg_low:
+                    st_name = p_val["state"].split()[0]
+                    for w in all_weather:
+                        if st_name.lower() in w["name"].lower():
+                            matched_state = w
+                            break
+                    if matched_state:
+                        break
+
+        if matched_state:
+            reply = (
+                f"🌦️ **Live Weather for {matched_state['name']} ({matched_state['capital']}):**\n\n"
+                f"• 🌡️ **Temperature:** {matched_state['temperature']}°C\n"
+                f"• 🌧️ **Precipitation:** {matched_state['rain']} mm/hr\n"
+                f"• 💨 **Wind Speed:** {matched_state['wind_speed']} km/h\n"
+                f"• 💧 **Humidity:** {matched_state['humidity']}%\n"
+                f"• ⛅ **Condition:** {matched_state['condition']}\n"
+                f"• ⚠️ **Road Risk Level:** **{matched_state['risk']}** ({matched_state['weather_zone']})"
+            )
+        else:
+            top_3 = all_weather[:4]
+            lines = [f"• **{w['name']}:** {w['temperature']}°C, {w['rain']} mm rain ({w['condition']}) — Risk: **{w['risk']}**" for w in top_3]
+            reply = (
+                "🌦️ **Real-Time 8-State Weather Telemetry (Open-Meteo):**\n\n" +
+                "\n".join(lines) +
+                "\n\n💡 *Tip: Ask 'Weather in Meghalaya', 'Weather in Assam', or 'Weather in Sikkim' for detailed single-state telemetry!*"
+            )
+        return jsonify({"reply": reply})
+
+    # 3. ROUTE COMPUTATION
+    if "from" in msg_low and "to" in msg_low:
+        parts = msg_low.split("to")
+        orig = parts[0].replace("from", "").replace("find route", "").strip()
+        dest = parts[1].strip()
+        return jsonify({"reply": f"🛣️ **AI Corridor Computed for {orig.title()} ➔ {dest.title()}:** Terrain slope gradient and rainfall risk evaluated. Check the Mission Control GIS Map for the safest corridor!"})
+
+    # 4. PASSES & CORRIDORS
+    if any(w in msg_low for w in ["tawang", "bomdila", "arunachal", "sela", "nh-13"]):
+        return jsonify({"reply": "⛰️ **Arunachal High-Altitude Alert:** NH-13 near Bomdila Pass KM 142 has **Active Mudflow** (Risk: HIGH). AI recommends taking the **Sela Tunnel / Kalaktang Valley Bypass**."})
+
+    # 5. CONVOY FLEET LOOKUP
+    if any(w in msg_low for w in ["track", "convoy", "truck", "med", "oxygen", "grain", "fleet", "vehicle"]):
+        v = vehicles[0]
+        return jsonify({"reply": f"🚚 **Live Convoy Telemetry [{v['id']}]:** Mission: {v['carrier']} ({v['cargo']}) | Speed: **{v['speed']}** | Driver: **{v['driver']}** | ETA: **{v['eta']}** | Status: **{v['status']}**."})
+
+    # 6. DISASTER & INCIDENTS
+    if any(w in msg_low for w in ["landslide", "flood", "disaster", "hazard", "incident", "bro", "sdma"]):
+        return jsonify({"reply": f"🚨 **Active Field Hazards:** Currently tracking **{len(incidents)} ground incidents**, including an active mudflow on NH-13 (Arunachal) and waterlogging near Sonapur Tunnel (Meghalaya). Check the Ground Disaster Stream!"})
+
+    # 7. ABOUT & PURPOSE
     if any(w in msg_low for w in ["what is", "about", "website", "project", "work", "purpose", "who are you", "tell me"]):
-        reply = (
+        return jsonify({"reply": (
             "🚚 **About NER-SMARTLOG (SIH PS-26002):**\n\n"
             "This portal is an **AI-powered Street Logistics & Hazard Intelligence System** for **MDoNER** (Ministry of Development of North Eastern Region).\n\n"
             "**Key Capabilities:**\n"
@@ -372,50 +435,36 @@ def api_chat():
             "• 🌦️ **8-State Weather:** Real-world weather telemetry across Assam, Arunachal, Meghalaya, Manipur, Mizoram, Nagaland, Tripura, and Sikkim.\n"
             "• 🛰️ **Convoy GPS Tracker:** Live tracking for emergency vaccine (`NER-MED-01`), oxygen (`NER-OXY-09`), and food trucks.\n"
             "• 🚨 **BRO Incident Terminal:** Real-time damage reporting and road clearance ETAs."
-        )
-    elif any(w in msg_low for w in ["hi", "hello", "namaste", "hey", "help", "start"]):
-        reply = (
-            "👋 **Namaste! I am NER-SMARTBOT**, your AI Logistics & Hazard Assistant for North East India.\n\n"
-            "Ask me anything:\n"
-            "• 🛣️ *'Find route from Guwahati to Tawang'*\n"
-            "• 🌦️ *'What is the weather in Meghalaya?'*\n"
-            "• 🚚 *'Track vehicle NER-MED-01'*\n"
-            "• ⛰️ *'Landslide status on NH-13'* \n"
-            "• 📊 *'How does the risk score work?'*"
-        )
-    elif "from" in msg_low and "to" in msg_low:
-        parts = msg_low.split("to")
-        orig = parts[0].replace("from", "").replace("find route", "").strip()
-        dest = parts[1].strip()
-        reply = f"🛣️ **AI Corridor Computed for {orig.title()} ➔ {dest.title()}:** Terrain slope gradient and rainfall risk evaluated. Check the Mission Control GIS Map for the safest corridor!"
-    elif any(w in msg_low for w in ["tawang", "bomdila", "arunachal", "sela", "nh-13"]):
-        reply = "⛰️ **Arunachal High-Altitude Alert:** NH-13 near Bomdila Pass KM 142 has **Active Mudflow** (Risk: HIGH). AI recommends taking the **Sela Tunnel / Kalaktang Valley Bypass**."
-    elif any(w in msg_low for w in ["weather", "rain", "temperature", "climate", "forecast"]):
-        reply = "🌦️ **Real-World 8-State Weather Online:** State-wise meteorological telemetry is active via Open-Meteo. Switch to the **Real-World 8-State Weather** tab to see live mm rainfall and temperatures!"
-    elif any(w in msg_low for w in ["track", "convoy", "truck", "med", "oxygen", "grain", "fleet", "vehicle"]):
-        v = vehicles[0]
-        reply = f"🚚 **Live Convoy Telemetry [{v['id']}]:** Mission: {v['carrier']} ({v['cargo']}) | Speed: **{v['speed']}** | Driver: **{v['driver']}** | ETA: **{v['eta']}** | Status: **{v['status']}**."
-    elif any(w in msg_low for w in ["landslide", "flood", "disaster", "hazard", "incident", "bro", "sdma"]):
-        reply = f"🚨 **Active Field Hazards:** Currently tracking **{len(incidents)} ground incidents**, including an active mudflow on NH-13 (Arunachal) and waterlogging near Sonapur Tunnel (Meghalaya). Check the Ground Disaster Stream!"
-    elif any(w in msg_low for w in ["state", "states", "8 states", "assam", "sikkim", "meghalaya", "manipur", "mizoram", "nagaland", "tripura"]):
-        reply = "🗺️ **8 North Eastern States Monitored:** Assam (AS), Arunachal Pradesh (AR), Meghalaya (ML), Manipur (MN), Mizoram (MZ), Nagaland (NL), Tripura (TR), and Sikkim (SK). Switch to the **State Accessibility Matrix** tab for state metrics!"
-    elif any(w in msg_low for w in ["risk", "formula", "score", "calculate", "algorithm"]):
-        reply = (
+        )})
+
+    # 8. RISK SCORE FORMULA
+    if any(w in msg_low for w in ["risk", "formula", "score", "calculate", "algorithm"]):
+        return jsonify({"reply": (
             "📐 **Hazard Risk Index Formula:**\n\n"
             "`Score = (0.30 x Rain) + (0.25 x Landslide_Slope) + (0.20 x Road_Passability) + (0.10 x Traffic) + (0.10 x History) + (0.05 x Elevation)`\n\n"
             "• **0–30:** LOW (Clear)\n• **31–60:** MEDIUM (Caution)\n• **61–80:** HIGH (Hazard)\n• **81–100:** CRITICAL (Auto-Reroute Triggered)"
-        )
-    else:
-        reply = (
-            "🤖 **NER-SMARTBOT:** I can help with North East logistics and hazard tracking!\n\n"
-            "Try asking:\n"
-            "• 🛣️ *'Find route from Guwahati to Tawang'*\n"
-            "• 🌦️ *'What is the weather in Meghalaya?'*\n"
-            "• 🚚 *'Track vehicle NER-MED-01'*\n"
-            "• ⛰️ *'Landslide status on NH-13'*"
-        )
+        )})
 
-    return jsonify({"reply": reply})
+    # 9. GREETINGS & DEFAULT
+    if any(w in msg_low for w in ["hi", "hello", "namaste", "hey", "help", "start"]):
+        return jsonify({"reply": (
+            "👋 **Namaste! I am NER-SMARTBOT**, your AI Logistics & Hazard Assistant for North East India.\n\n"
+            "Ask me anything:\n"
+            "• 🌦️ *'Weather in Meghalaya'* or *'Weather in Assam'*\n"
+            "• 🛣️ *'Find route from Guwahati to Tawang'*\n"
+            "• 🚚 *'Track vehicle NER-MED-01'*\n"
+            "• ⛰️ *'Landslide status on NH-13'* \n"
+            "• 📊 *'How does the risk score work?'*"
+        )})
+
+    return jsonify({"reply": (
+        "🤖 **NER-SMARTBOT:** I can answer questions about North East India logistics, weather, convoys, and hazards!\n\n"
+        "Try asking:\n"
+        "• 🌦️ *'Weather in Meghalaya'*\n"
+        "• 🛣️ *'Find route from Guwahati to Tawang'*\n"
+        "• 🚚 *'Track vehicle NER-MED-01'*\n"
+        "• ⛰️ *'Landslide status on NH-13'*"
+    )})
 
 @app.route("/submit-disaster-report", methods=["POST"])
 def submit_disaster_report():
