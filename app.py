@@ -304,7 +304,7 @@ def find_routes():
     })
 
 # ==========================================================
-# 6. VEHICLE TRACKER & SMART AI CHATBOT
+# 6. VEHICLE TRACKER & SMART DIRECT-ANSWER AI CHATBOT
 # ==========================================================
 @app.route("/api/track-vehicle", methods=["POST"])
 def track_vehicle():
@@ -329,7 +329,7 @@ def api_chat():
     data = request.get_json(silent=True) or {}
     user_msg = data.get("message", "").strip()
     if not user_msg:
-        return jsonify({"reply": "Namaste! Please ask a question about North East routes, weather, convoys, or hazards."})
+        return jsonify({"reply": "Namaste! Please ask a question about North East weather, routes, convoys, or hazards."})
 
     msg_low = user_msg.lower()
     gemini_key = os.environ.get("GEMINI_API_KEY", "").strip()
@@ -337,19 +337,17 @@ def api_chat():
     # 1. Real LLM (Gemini) if API key is provided
     if gemini_key:
         try:
-            active_incidents_text = "; ".join([f"{inc['type']} at {inc['location']} (Severity: {inc['severity']})" for inc in incidents])
-            active_convoys_text = "; ".join([f"{v['id']} ({v['cargo']}) from {v['origin']} to {v['destination']}, Speed: {v['speed']}" for v in vehicles])
+            all_weather = get_8_states_weather()
+            weather_text = "; ".join([f"{w['name']}: {w['temperature']}°C, {w['rain']}mm rain ({w['condition']}, Risk: {w['risk']})" for w in all_weather])
+            incidents_text = "; ".join([f"{inc['type']} at {inc['location']} (Severity: {inc['severity']})" for inc in incidents])
+            convoys_text = "; ".join([f"{v['id']} ({v['cargo']}) moving {v['origin']}->{v['destination']}, Speed: {v['speed']}" for v in vehicles])
 
             system_prompt = (
-                "You are NER-SMARTBOT, an AI logistics and hazard intelligence copilot for the NER-SMARTLOG portal "
-                "(Ministry of Development of North Eastern Region - MDoNER | SIH 26002).\n\n"
-                "FOCUS:\n"
-                "- 8 North Eastern states (Assam, Arunachal Pradesh, Meghalaya, Manipur, Mizoram, Nagaland, Tripura, Sikkim).\n"
-                "- Mountain highway bypasses, real-time landslide risk scoring, live Open-Meteo weather, and relief convoys.\n"
-                "- Answer questions accurately about live weather, routes, and convoys.\n\n"
-                f"LIVE CONTEXT:\n"
-                f"• Active Incidents: {active_incidents_text}\n"
-                f"• Active Convoys: {active_convoys_text}\n"
+                "You are NER-SMARTBOT, an elite AI logistics & hazard telemetry copilot for North East India (MDoNER / SIH PS-26002).\n\n"
+                "IMPORTANT INSTRUCTION: Always answer questions DIRECTLY with full metrics inside this chat message.\n\n"
+                f"CURRENT LIVE 8-STATE WEATHER DATA:\n{weather_text}\n\n"
+                f"CURRENT ACTIVE ROAD HAZARDS:\n{incidents_text}\n\n"
+                f"CURRENT ACTIVE CONVOYS:\n{convoys_text}\n"
             )
 
             url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key={gemini_key}"
@@ -362,18 +360,17 @@ def api_chat():
         except Exception as e:
             print(f"Gemini API fallback: {e}")
 
-    # 2. SMART LIVE WEATHER LOOKUP (Returns exact real-time numbers)
+    # 2. DIRECT WEATHER METRICS PRINTED IN CHAT
     if any(w in msg_low for w in ["weather", "rain", "temperature", "temp", "climate", "forecast", "humidity", "wind"]):
         all_weather = get_8_states_weather()
         
-        # Check if user asked about a specific state
+        # Check single state request
         matched_state = None
         for w in all_weather:
-            if w["name"].lower() in msg_low or w["code"].lower() == msg_low or w["capital"].lower() in msg_low:
+            if w["name"].lower() in msg_low or w["code"].lower() in msg_low.split() or w["capital"].lower() in msg_low:
                 matched_state = w
                 break
         
-        # Also check places
         if not matched_state:
             for p_key, p_val in NER_PLACES.items():
                 if p_key in msg_low:
@@ -387,43 +384,74 @@ def api_chat():
 
         if matched_state:
             reply = (
-                f"🌦️ **Live Weather for {matched_state['name']} ({matched_state['capital']}):**\n\n"
+                f"🌦️ **Live Weather Telemetry for {matched_state['name']} ({matched_state['capital']}):**\n\n"
                 f"• 🌡️ **Temperature:** {matched_state['temperature']}°C\n"
                 f"• 🌧️ **Precipitation:** {matched_state['rain']} mm/hr\n"
                 f"• 💨 **Wind Speed:** {matched_state['wind_speed']} km/h\n"
                 f"• 💧 **Humidity:** {matched_state['humidity']}%\n"
-                f"• ⛅ **Condition:** {matched_state['condition']}\n"
+                f"• ⛅ **Sky Condition:** {matched_state['condition']}\n"
                 f"• ⚠️ **Road Risk Level:** **{matched_state['risk']}** ({matched_state['weather_zone']})"
             )
         else:
-            top_3 = all_weather[:4]
-            lines = [f"• **{w['name']}:** {w['temperature']}°C, {w['rain']} mm rain ({w['condition']}) — Risk: **{w['risk']}**" for w in top_3]
+            lines = []
+            for w in all_weather:
+                icon = "🔴" if w['risk'] == "HIGH" else ("🟡" if w['risk'] == "MEDIUM" else "🟢")
+                lines.append(f"{icon} **{w['name']}:** {w['temperature']}°C | {w['rain']} mm rain | {w['condition']} | Risk: **{w['risk']}**")
+            
             reply = (
-                "🌦️ **Real-Time 8-State Weather Telemetry (Open-Meteo):**\n\n" +
+                "🌦️ **Live Weather Telemetry Across All 8 North Eastern States:**\n\n" +
                 "\n".join(lines) +
-                "\n\n💡 *Tip: Ask 'Weather in Meghalaya', 'Weather in Assam', or 'Weather in Sikkim' for detailed single-state telemetry!*"
+                "\n\n*(Telemetry updated via Open-Meteo High-Resolution NWP Gateway)*"
             )
         return jsonify({"reply": reply})
 
-    # 3. ROUTE COMPUTATION
+    # 3. DIRECT CONVOY TRACKING PRINTED IN CHAT
+    if any(w in msg_low for w in ["track", "convoy", "truck", "med", "oxygen", "grain", "fleet", "vehicle"]):
+        matched_v = None
+        for v in vehicles:
+            if v["id"].lower() in msg_low or v["carrier"].lower() in msg_low or v["cargo"].lower() in msg_low:
+                matched_v = v
+                break
+        
+        if matched_v:
+            reply = (
+                f"🚚 **Live Convoy Telemetry [{matched_v['id']}]:**\n\n"
+                f"• 📦 **Carrier & Cargo:** {matched_v['carrier']} ({matched_v['cargo']})\n"
+                f"• 🚨 **Priority:** **{matched_v['priority']}**\n"
+                f"• 🛣️ **Route:** {matched_v['origin']} ➔ {matched_v['destination']}\n"
+                f"• ⚡ **Current Speed:** {matched_v['speed']} (ETA: {matched_v['eta']})\n"
+                f"• 👨‍✈️ **Driver / Contact:** {matched_v['driver']}\n"
+                f"• 📍 **Status:** {matched_v['status']}\n"
+                f"• ❄️ **Cold-Chain Temp:** {matched_v.get('temp_controlled', 'N/A')}"
+            )
+        else:
+            lines = [f"• 🚚 **{v['id']}** ({v['cargo']}): {v['origin']} ➔ {v['destination']} | Speed: **{v['speed']}** | Status: *{v['status']}*" for v in vehicles]
+            reply = "🛰️ **Live Active Convoys in North East Grid:**\n\n" + "\n".join(lines)
+        return jsonify({"reply": reply})
+
+    # 4. DIRECT DISASTER HAZARDS PRINTED IN CHAT
+    if any(w in msg_low for w in ["landslide", "flood", "disaster", "hazard", "incident", "bro", "sdma", "road damage"]):
+        lines = []
+        for inc in incidents:
+            lines.append(
+                f"⚠️ **[{inc['severity']}] {inc['type']}**\n"
+                f"   📍 Location: {inc['location']}\n"
+                f"   🕒 Reported: {inc['time']} by {inc['reported_by']}\n"
+                f"   📝 Status: {inc['description']}\n"
+            )
+        reply = f"🚨 **Active Field Hazards Broadcast ({len(incidents)} Active):**\n\n" + "\n".join(lines)
+        return jsonify({"reply": reply})
+
+    # 5. ROUTE COMPUTATION
     if "from" in msg_low and "to" in msg_low:
         parts = msg_low.split("to")
         orig = parts[0].replace("from", "").replace("find route", "").strip()
         dest = parts[1].strip()
         return jsonify({"reply": f"🛣️ **AI Corridor Computed for {orig.title()} ➔ {dest.title()}:** Terrain slope gradient and rainfall risk evaluated. Check the Mission Control GIS Map for the safest corridor!"})
 
-    # 4. PASSES & CORRIDORS
+    # 6. PASSES & CORRIDORS
     if any(w in msg_low for w in ["tawang", "bomdila", "arunachal", "sela", "nh-13"]):
         return jsonify({"reply": "⛰️ **Arunachal High-Altitude Alert:** NH-13 near Bomdila Pass KM 142 has **Active Mudflow** (Risk: HIGH). AI recommends taking the **Sela Tunnel / Kalaktang Valley Bypass**."})
-
-    # 5. CONVOY FLEET LOOKUP
-    if any(w in msg_low for w in ["track", "convoy", "truck", "med", "oxygen", "grain", "fleet", "vehicle"]):
-        v = vehicles[0]
-        return jsonify({"reply": f"🚚 **Live Convoy Telemetry [{v['id']}]:** Mission: {v['carrier']} ({v['cargo']}) | Speed: **{v['speed']}** | Driver: **{v['driver']}** | ETA: **{v['eta']}** | Status: **{v['status']}**."})
-
-    # 6. DISASTER & INCIDENTS
-    if any(w in msg_low for w in ["landslide", "flood", "disaster", "hazard", "incident", "bro", "sdma"]):
-        return jsonify({"reply": f"🚨 **Active Field Hazards:** Currently tracking **{len(incidents)} ground incidents**, including an active mudflow on NH-13 (Arunachal) and waterlogging near Sonapur Tunnel (Meghalaya). Check the Ground Disaster Stream!"})
 
     # 7. ABOUT & PURPOSE
     if any(w in msg_low for w in ["what is", "about", "website", "project", "work", "purpose", "who are you", "tell me"]):
@@ -446,24 +474,14 @@ def api_chat():
         )})
 
     # 9. GREETINGS & DEFAULT
-    if any(w in msg_low for w in ["hi", "hello", "namaste", "hey", "help", "start"]):
-        return jsonify({"reply": (
-            "👋 **Namaste! I am NER-SMARTBOT**, your AI Logistics & Hazard Assistant for North East India.\n\n"
-            "Ask me anything:\n"
-            "• 🌦️ *'Weather in Meghalaya'* or *'Weather in Assam'*\n"
-            "• 🛣️ *'Find route from Guwahati to Tawang'*\n"
-            "• 🚚 *'Track vehicle NER-MED-01'*\n"
-            "• ⛰️ *'Landslide status on NH-13'* \n"
-            "• 📊 *'How does the risk score work?'*"
-        )})
-
     return jsonify({"reply": (
-        "🤖 **NER-SMARTBOT:** I can answer questions about North East India logistics, weather, convoys, and hazards!\n\n"
-        "Try asking:\n"
-        "• 🌦️ *'Weather in Meghalaya'*\n"
-        "• 🛣️ *'Find route from Guwahati to Tawang'*\n"
+        "👋 **Namaste! I am NER-SMARTBOT**, your AI Logistics & Hazard Assistant for North East India.\n\n"
+        "Ask me anything:\n"
+        "• 🌦️ *'Weather in Meghalaya'* or *'Weather in Assam'*\n"
         "• 🚚 *'Track vehicle NER-MED-01'*\n"
-        "• ⛰️ *'Landslide status on NH-13'*"
+        "• 🚨 *'Show active landslide hazards'*\n"
+        "• 🛣️ *'Find route from Guwahati to Tawang'*\n"
+        "• 📊 *'How does the risk score work?'*"
     )})
 
 @app.route("/submit-disaster-report", methods=["POST"])
