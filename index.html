@@ -44,18 +44,35 @@
             align-items: center;
             justify-content: center;
             background: radial-gradient(circle at center, #111e42 0%, #070e20 100%);
-            padding: 20px;
+            padding: 24px 16px;
+        }
+
+        .login-wrapper {
+            display: grid;
+            grid-template-columns: 1fr 1.2fr;
+            gap: 24px;
+            width: 100%;
+            max-width: 960px;
         }
 
         .login-card {
-            background: rgba(15, 28, 63, 0.92);
+            background: rgba(15, 28, 63, 0.95);
             border: 1px solid var(--border-color);
             border-radius: 16px;
-            width: 100%;
-            max-width: 480px;
-            padding: 36px;
+            padding: 32px;
             box-shadow: 0 16px 40px rgba(0, 0, 0, 0.7), 0 0 24px rgba(56, 189, 248, 0.2);
             backdrop-filter: blur(16px);
+        }
+
+        .credentials-card {
+            background: rgba(23, 42, 89, 0.7);
+            border: 1px solid rgba(56, 189, 248, 0.3);
+            border-radius: 16px;
+            padding: 30px;
+            backdrop-filter: blur(16px);
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
         }
 
         .brand-badge {
@@ -69,32 +86,33 @@
             border-radius: 20px;
             font-size: 11px;
             font-weight: 700;
-            margin-bottom: 16px;
+            margin-bottom: 14px;
         }
 
         .login-card h1 {
             font-size: 22px;
             font-weight: 800;
             color: var(--text-primary);
-            margin-bottom: 6px;
+            margin-bottom: 4px;
         }
 
         .login-card p.subtitle {
             font-size: 12px;
             color: var(--text-secondary);
-            margin-bottom: 22px;
+            margin-bottom: 20px;
         }
 
         .form-group { margin-bottom: 16px; }
         .form-group label {
             display: block; font-size: 11px; font-weight: 700; color: var(--text-secondary);
-            margin-bottom: 6px; text-transform: uppercase;
+            margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.5px;
         }
 
         .form-group input, .form-group select, .form-group textarea {
             width: 100%; padding: 12px 14px; background: rgba(7, 14, 32, 0.85);
             border: 1px solid var(--border-color); color: white; border-radius: 8px; font-size: 13px;
         }
+        .form-group select option { background: #0f1c3f; color: white; }
 
         .login-btn, .finder-btn {
             background: linear-gradient(135deg, #2563eb, #38bdf8);
@@ -105,20 +123,32 @@
         }
         .login-btn:hover, .finder-btn:hover { opacity: 0.9; }
 
-        .divider {
-            display: flex; align-items: center; text-align: center; margin: 20px 0 14px 0;
-            color: var(--text-secondary); font-size: 11px; font-weight: 700;
+        .cred-box {
+            background: rgba(7, 14, 32, 0.7);
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+            padding: 14px;
+            margin-bottom: 14px;
+            transition: border-color 0.2s;
         }
-        .divider::before, .divider::after { content: ''; flex: 1; border-bottom: 1px solid var(--border-color); }
-        .divider span { padding: 0 10px; }
+        .cred-box:hover { border-color: var(--accent-blue); }
 
-        .quick-demo-btn {
-            background: var(--bg-card-alt); border: 1px solid var(--border-color); color: #cbd5e1;
-            padding: 10px 14px; border-radius: 8px; font-size: 12px; font-weight: 600;
-            cursor: pointer; width: 100%; margin-bottom: 8px; display: flex;
-            align-items: center; justify-content: space-between; transition: all 0.2s;
+        .cred-header {
+            display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;
         }
-        .quick-demo-btn:hover { border-color: var(--accent-blue); background: #1f3775; }
+
+        .cred-fill-btn {
+            background: rgba(56, 189, 248, 0.15);
+            border: 1px solid var(--accent-blue);
+            color: var(--accent-blue);
+            padding: 4px 10px;
+            border-radius: 6px;
+            font-size: 11px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .cred-fill-btn:hover { background: var(--accent-blue); color: var(--bg-primary); }
 
         /* 2. DASHBOARD VIEW STYLES */
         #dashboard-view { min-height: 100vh; flex-direction: column; }
@@ -153,51 +183,12 @@
 
         .container { padding: 24px 30px; max-width: 1560px; margin: auto; width: 100%; }
 
-        /* VEHICLE OWNER SUMMARY CARD */
-        .owner-summary-card {
-            background: linear-gradient(135deg, #132247 0%, #1e3a8a 100%);
-            border: 2px solid var(--accent-blue);
-            border-radius: 14px;
-            padding: 22px;
-            margin-bottom: 24px;
-            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+        /* ROLE ACCESS BANNER */
+        .role-banner {
+            border-radius: 12px; padding: 14px 20px; margin-bottom: 20px; display: flex; justify-content: space-between; align-items: center;
         }
-        .owner-telemetry-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 16px;
-            margin-top: 14px;
-        }
-        .telemetry-item {
-            background: rgba(7, 14, 32, 0.6);
-            border: 1px solid var(--border-color);
-            border-radius: 10px;
-            padding: 14px;
-        }
-        .telemetry-label {
-            font-size: 11px;
-            text-transform: uppercase;
-            color: var(--text-secondary);
-            font-weight: 700;
-            margin-bottom: 4px;
-        }
-        .telemetry-value {
-            font-size: 16px;
-            font-weight: 800;
-            color: var(--text-primary);
-        }
-
-        /* MODAL */
-        #vehicle-modal-overlay {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0, 0, 0, 0.75); backdrop-filter: blur(8px); z-index: 99999;
-            display: none; align-items: center; justify-content: center; padding: 20px;
-        }
-        .vehicle-modal {
-            background: #0f1c3f; border: 2px solid var(--accent-blue); border-radius: 16px;
-            width: 100%; max-width: 520px; padding: 30px; position: relative;
-        }
-        .modal-close { position: absolute; top: 16px; right: 18px; font-size: 20px; color: var(--text-secondary); cursor: pointer; }
+        .role-banner.official { background: rgba(34, 197, 94, 0.12); border: 1px solid var(--accent-green); }
+        .role-banner.traveler { background: rgba(56, 189, 248, 0.12); border: 1px solid var(--accent-blue); }
 
         /* ROUTE FINDER & PANELS */
         .route-finder-panel {
@@ -241,8 +232,8 @@
 
         .chatbot-container { display: flex; flex-direction: column; height: 560px; background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 12px; overflow: hidden; }
         .chat-messages { flex: 1; padding: 20px; overflow-y: auto; display: flex; flex-direction: column; gap: 14px; }
-        .chat-bubble { max-width: 80%; padding: 12px 18px; border-radius: 12px; font-size: 13px; line-height: 1.6; }
-        .chat-bubble.bot { background: var(--bg-card-alt); align-self: flex-start; color: #f8fafc; }
+        .chat-bubble { max-width: 85%; padding: 14px 18px; border-radius: 12px; font-size: 13px; line-height: 1.6; }
+        .chat-bubble.bot { background: var(--bg-card-alt); align-self: flex-start; color: #f8fafc; border: 1px solid rgba(56, 189, 248, 0.2); }
         .chat-bubble.user { background: #2563eb; color: white; align-self: flex-end; }
         .chat-input-area { display: flex; padding: 14px 20px; background: var(--bg-card-alt); border-top: 1px solid var(--border-color); gap: 10px; }
 
@@ -252,7 +243,7 @@
             box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
         }
         #floating-chat-window {
-            position: fixed; bottom: 95px; right: 24px; width: 400px; height: 520px; background: var(--bg-card);
+            position: fixed; bottom: 95px; right: 24px; width: 420px; height: 530px; background: var(--bg-card);
             border: 1px solid var(--border-color); border-radius: 16px; z-index: 9999; display: none; flex-direction: column; overflow: hidden;
             box-shadow: 0 12px 32px rgba(0,0,0,0.6);
         }
@@ -263,75 +254,123 @@
         .panel-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; }
         .panel-header h3 { font-size: 16px; font-weight: 700; color: var(--accent-blue); }
 
-        @media (max-width: 1050px) { .finder-grid, .weather-grid-8, .dashboard-grid, .routes-result-grid, .form-row { grid-template-columns: 1fr; } }
+        @media (max-width: 1050px) { 
+            .login-wrapper { grid-template-columns: 1fr; }
+            .finder-grid, .weather-grid-8, .dashboard-grid, .routes-result-grid, .form-row { grid-template-columns: 1fr; } 
+        }
     </style>
 </head>
 
 <body>
 
-    <!-- ================= VIEW 1: AUTHENTICATION (LOGIN) ================= -->
+    <!-- ================= VIEW 1: AUTHENTICATION (LOGIN & CREDENTIALS PAGE) ================= -->
     <div id="auth-view" style="display: {% if is_login or not user %}flex{% else %}none{% endif %};">
-        <div class="login-card">
-            <div class="brand-badge">
-                <span>🛡️ Ministry of Development of North Eastern Region (MDoNER)</span>
+        <div class="login-wrapper">
+            
+            <!-- Left: Login Form -->
+            <div class="login-card">
+                <div class="brand-badge">
+                    <span>🛡️ Ministry of Development of North Eastern Region (MDoNER)</span>
+                </div>
+
+                <h1>🚚 NER-SMARTLOG</h1>
+                <p class="subtitle">AI Street Logistics & Real-Time Hazard Intelligence Portal</p>
+
+                {% if login_error %}
+                <div style="background:rgba(239,68,68,0.2); border:1px solid #ef4444; color:#fca5a5; padding:10px 14px; border-radius:8px; font-size:12px; margin-bottom:14px;">
+                    ⚠️ {{ login_error }}
+                </div>
+                {% endif %}
+
+                <form action="/login" method="POST" id="main-login-form">
+                    <div class="form-group">
+                        <label>Email / Official ID</label>
+                        <input type="email" name="email" id="login-email" value="officer@ner.gov.in" placeholder="Enter your email" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Security Password</label>
+                        <input type="password" name="password" id="login-password" value="officer2026" placeholder="Enter password" required>
+                    </div>
+
+                    <button type="submit" class="login-btn">
+                        🔐 Authenticate & Access Grid ➔
+                    </button>
+                </form>
+
+                <p style="text-align:center; font-size:11px; color:#64748b; margin-top:20px;">
+                    Smart India Hackathon 2026 • Problem Statement 26002
+                </p>
             </div>
 
-            <h1>🚚 NER-SMARTLOG</h1>
-            <p class="subtitle">AI Street Logistics & Real-Time Hazard Intelligence Portal</p>
+            <!-- Right: Login Credentials Reference Card (2 Officers + 2 Travelers) -->
+            <div class="credentials-card">
+                <div>
+                    <h3 style="color:#38bdf8; font-size:16px; margin-bottom:6px;">📋 Official Login Credentials</h3>
+                    <p style="font-size:12px; color:var(--text-secondary); margin-bottom:16px;">
+                        Select or click "Auto-Fill" to test the different authorization levels:
+                    </p>
 
-            <form action="/login" method="POST">
-                <div class="form-group">
-                    <label>Email / Personnel ID</label>
-                    <input type="text" name="username" id="login-username" value="BRO-OFFICER-44" placeholder="e.g. Insp. D. Sharma or owner@nermed01.in" required>
+                    <!-- Role 1: Field Officers & Govt Officials -->
+                    <div style="font-size:12px; font-weight:800; color:#4ade80; text-transform:uppercase; margin-bottom:8px;">
+                        👮 1. Field Officers & Government Officials (Tactical Fleet View)
+                    </div>
+
+                    <div class="cred-box">
+                        <div class="cred-header">
+                            <div>
+                                <b style="color:#fff; font-size:13px;">Insp. D. Sharma</b>
+                                <span style="font-size:11px; color:#38bdf8; display:block;">Field Patrol Officer (BRO)</span>
+                            </div>
+                            <button class="cred-fill-btn" onclick="autofillLogin('officer@ner.gov.in', 'officer2026')">⚡ 1-Click Login</button>
+                        </div>
+                        <div style="font-size:11px; color:#cbd5e1;">Email: <code>officer@ner.gov.in</code> | Pass: <code>officer2026</code></div>
+                    </div>
+
+                    <div class="cred-box">
+                        <div class="cred-header">
+                            <div>
+                                <b style="color:#fff; font-size:13px;">Commander R. Barua</b>
+                                <span style="font-size:11px; color:#38bdf8; display:block;">Higher Government Official (MDoNER)</span>
+                            </div>
+                            <button class="cred-fill-btn" onclick="autofillLogin('commander@ner.gov.in', 'govt2026')">⚡ 1-Click Login</button>
+                        </div>
+                        <div style="font-size:11px; color:#cbd5e1;">Email: <code>commander@ner.gov.in</code> | Pass: <code>govt2026</code></div>
+                    </div>
+
+                    <!-- Role 2: Normal Travelers & Civilians -->
+                    <div style="font-size:12px; font-weight:800; color:#38bdf8; text-transform:uppercase; margin:14px 0 8px 0;">
+                        🚗 2. Normal Vehicle Travelers / Civilians (Public Safety View)
+                    </div>
+
+                    <div class="cred-box">
+                        <div class="cred-header">
+                            <div>
+                                <b style="color:#fff; font-size:13px;">Arunav Das</b>
+                                <span style="font-size:11px; color:#94a3b8; display:block;">Normal Vehicle Traveler / Tourist</span>
+                            </div>
+                            <button class="cred-fill-btn" onclick="autofillLogin('traveler@northeast.in', 'travel2026')">⚡ 1-Click Login</button>
+                        </div>
+                        <div style="font-size:11px; color:#cbd5e1;">Email: <code>traveler@northeast.in</code> | Pass: <code>travel2026</code></div>
+                    </div>
+
+                    <div class="cred-box">
+                        <div class="cred-header">
+                            <div>
+                                <b style="color:#fff; font-size:13px;">Bijoy Gogoi</b>
+                                <span style="font-size:11px; color:#94a3b8; display:block;">Commercial Transport Driver</span>
+                            </div>
+                            <button class="cred-fill-btn" onclick="autofillLogin('driver@nerlog.in', 'driver2026')">⚡ 1-Click Login</button>
+                        </div>
+                        <div style="font-size:11px; color:#cbd5e1;">Email: <code>driver@nerlog.in</code> | Pass: <code>driver2026</code></div>
+                    </div>
                 </div>
 
-                <div class="form-group">
-                    <label>Security Password</label>
-                    <input type="password" name="password" id="login-password" value="sih2026" required>
+                <div style="font-size:11px; color:#94a3b8; background:rgba(7,14,32,0.8); padding:8px 12px; border-radius:6px;">
+                    🛡️ <b>Security Rule:</b> Live tactical GPS coordinates of non-emergency military convoys are hidden from normal travelers and visible only to authenticated officials.
                 </div>
-
-                <div class="form-group">
-                    <label>Command Role</label>
-                    <select name="role" id="login-role">
-                        <option value="Field Patrol Officer (BRO)">Field Patrol Officer (BRO)</option>
-                        <option value="Convoy Logistics Commander">Convoy Logistics Commander</option>
-                        <option value="State Disaster Controller (SDMA)">State Disaster Controller (SDMA)</option>
-                        <option value="vehicle_owner">🚛 Vehicle Owner (Fleet Telemetry View)</option>
-                    </select>
-                </div>
-
-                <button type="submit" class="login-btn">
-                    🔐 Authenticate & Access Grid ➔
-                </button>
-            </form>
-
-            <div class="divider">
-                <span>⚡ JUDGES 1-CLICK DEMO LOGIN</span>
             </div>
 
-            <button type="button" class="quick-demo-btn" onclick="quickDemoLogin('owner@nermed01.in', 'vehicle_owner')">
-                <span>🚛 Login as Vehicle Owner (NER-MED-01)</span>
-                <span style="color:#38bdf8;">Owner Access ➔</span>
-            </button>
-
-            <button type="button" class="quick-demo-btn" onclick="quickDemoLogin('Insp. D. Sharma', 'Field Patrol Officer (BRO)')">
-                <span>👮 Login as Ground Field Officer</span>
-                <span style="color:#22c55e;">Instant ➔</span>
-            </button>
-
-            <button type="button" class="quick-demo-btn" onclick="quickDemoLogin('Commander R. Barua', 'Convoy Logistics Commander')">
-                <span>🚚 Login as Logistics Commander</span>
-                <span style="color:#38bdf8;">Instant ➔</span>
-            </button>
-
-            <button type="button" class="quick-demo-btn" onclick="quickDemoLogin('Director S. Roy', 'State Disaster Controller (SDMA)')">
-                <span>📡 Login as Disaster Controller (SDMA)</span>
-                <span style="color:#f59e0b;">Instant ➔</span>
-            </button>
-
-            <p style="text-align:center; font-size:11px; color:#64748b; margin-top:18px;">
-                Smart India Hackathon 2026 • Problem Statement 26002
-            </p>
         </div>
     </div>
 
@@ -345,16 +384,13 @@
             </div>
 
             <div style="display:flex; align-items:center; gap:12px;">
-                <button class="finder-btn" style="width:auto; padding:7px 14px; font-size:12px;" onclick="openVehicleModal()">
-                    🛰️ Track Vehicle Modal
-                </button>
                 <div class="user-pill">
-                    {% if is_vehicle_owner %}
-                    <span>🚛 <span id="current-user-display">{{ user }}</span></span>
-                    <span style="color:#fbbf24; font-size:11px;" id="current-role-display">(Vehicle Owner - View Only)</span>
+                    {% if is_official %}
+                    <span>👮 <b style="color:#fff;">{{ user }}</b></span>
+                    <span style="color:#4ade80; font-size:11px;">(Official: {{ role }})</span>
                     {% else %}
-                    <span>👮 <span id="current-user-display">{{ user }}</span></span>
-                    <span style="color:#38bdf8; font-size:11px;" id="current-role-display">({{ role }})</span>
+                    <span>🚗 <b style="color:#fff;">{{ user }}</b></span>
+                    <span style="color:#38bdf8; font-size:11px;">(Traveler: {{ role }})</span>
                     {% endif %}
                 </div>
                 <a href="/logout" class="logout-btn">Logout ✖️</a>
@@ -362,510 +398,187 @@
         </header>
 
         <nav class="nav-tabs">
-            <button class="tab-btn active" id="btn-tab-finder" onclick="switchTab('tab-finder')">
-                {% if is_vehicle_owner %}🚛 My Vehicle Telemetry & Map{% else %}🗺️ Mission Control & Route Optimizer{% endif %}
-            </button>
+            <button class="tab-btn active" id="btn-tab-finder" onclick="switchTab('tab-finder')">🗺️ Mission Control & Route Optimizer</button>
             <button class="tab-btn" id="btn-tab-weather" onclick="switchTab('tab-weather')">🌦️ Real-World 8-State Weather</button>
+            <button class="tab-btn" id="btn-tab-chatbot" onclick="switchTab('tab-chatbot')">🤖 NER-SMARTBOT AI Chat</button>
             
-            {% if not is_vehicle_owner %}
+            {% if is_official %}
             <button class="tab-btn officer-tab" id="btn-tab-officer" onclick="switchTab('tab-officer')">👮 Field Officer Disaster Terminal</button>
+            <button class="tab-btn" id="btn-tab-fleet" onclick="switchTab('tab-fleet')">🛰️ Tactical Fleet Telemetry (Official)</button>
+            {% else %}
+            <button class="tab-btn" id="btn-tab-fleet" onclick="switchTab('tab-fleet')">🚨 Emergency Convoys (Public)</button>
             {% endif %}
 
-            <button class="tab-btn" id="btn-tab-chatbot" onclick="switchTab('tab-chatbot')">🤖 NER-SMARTBOT AI Chat</button>
-            <button class="tab-btn" id="btn-tab-fleet" onclick="switchTab('tab-fleet')">🚚 Essential Relief Fleet</button>
             <button class="tab-btn" id="btn-tab-analytics" onclick="switchTab('tab-analytics')">📊 State Accessibility Matrix</button>
         </nav>
 
         <main class="container">
 
-            <!-- VEHICLE OWNER SUMMARY CARD (ONLY VISIBLE FOR VEHICLE OWNER) -->
-            {% if is_vehicle_owner and assigned_vehicle %}
-            <section class="owner-summary-card">
-                <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px;">
-                    <div>
-                        <span class="badge green">● LIVE TELEMETRY STREAM</span>
-                        <h2 style="font-size:20px; font-weight:800; color:white; margin-top:6px;">
-                            🚚 {{ assigned_vehicle.id }}: {{ assigned_vehicle.carrier }}
-                        </h2>
-                        <p style="font-size:12px; color:#cbd5e1;">Assigned Driver: <b>{{ assigned_vehicle.driver }}</b> | Transit: <b>{{ assigned_vehicle.origin }} ➔ {{ assigned_vehicle.destination }}</b></p>
-                    </div>
-                    <button class="finder-btn" style="width:auto; padding:8px 18px;" onclick="locateOwnerVehicle('{{ assigned_vehicle.lat }}', '{{ assigned_vehicle.lon }}', '{{ assigned_vehicle.id }}')">
-                        🎯 Center On Map
-                    </button>
+            <!-- ROLE BANNER -->
+            {% if is_official %}
+            <div class="role-banner official">
+                <div>
+                    <span class="badge green">● FULL TACTICAL ACCESS LEVEL</span>
+                    <h3 style="font-size:15px; margin-top:4px;">Authorized Government / Field Officer Access</h3>
+                    <p style="font-size:12px; color:#cbd5e1;">You have full authority to view all live convoy coordinates, high-altitude pass closures, and broadcast disaster alerts.</p>
                 </div>
-
-                <div class="owner-telemetry-grid">
-                    <div class="telemetry-item">
-                        <div class="telemetry-label">📦 Cargo & Priority</div>
-                        <div class="telemetry-value"><span class="badge red">{{ assigned_vehicle.cargo }}</span></div>
-                    </div>
-                    <div class="telemetry-item">
-                        <div class="telemetry-label">⚡ Speed & ETA</div>
-                        <div class="telemetry-value" style="color:#38bdf8;">{{ assigned_vehicle.speed }} <span style="font-size:12px; color:#94a3b8;">(ETA: {{ assigned_vehicle.eta }})</span></div>
-                    </div>
-                    <div class="telemetry-item">
-                        <div class="telemetry-label">⛽ Fuel & Cold-Chain</div>
-                        <div class="telemetry-value">{{ assigned_vehicle.fuel }} <span style="font-size:12px; color:#4ade80;">({{ assigned_vehicle.temperature }})</span></div>
-                    </div>
-                    <div class="telemetry-item">
-                        <div class="telemetry-label">🛡️ Assigned Corridor Safety</div>
-                        <div class="telemetry-value" style="color:#4ade80;">71.6% Safe (LOW Hazard)</div>
-                    </div>
-                </div>
-            </section>
-            {% endif %}
-
-            <!-- VEHICLE MODAL -->
-            <div id="vehicle-modal-overlay">
-                <div class="vehicle-modal">
-                    <span class="modal-close" onclick="closeVehicleModal()">✖️</span>
-                    <h2 style="font-size:18px; color:var(--accent-blue); margin-bottom:10px;">🚚 Regional Convoy Live GPS Tracker</h2>
-                    <div class="form-group">
-                        <label>Vehicle Registration Number</label>
-                        <input type="text" id="modal-vehicle-input" value="NER-MED-01">
-                    </div>
-                    <div style="margin-bottom:16px; display: flex; flex-wrap: wrap; gap: 6px;">
-                        <span class="chip" onclick="selectVehiclePreset('NER-MED-01')">NER-MED-01 (Vaccines)</span>
-                        <span class="chip" onclick="selectVehiclePreset('NER-OXY-09')">NER-OXY-09 (Oxygen)</span>
-                        <span class="chip" onclick="selectVehiclePreset('NER-RAT-04')">NER-RAT-04 (Grain)</span>
-                        <span class="chip" onclick="selectVehiclePreset('AS-01-GB-4421')">AS-01-GB-4421 (Crane)</span>
-                    </div>
-                    <button class="finder-btn" onclick="submitVehicleTrack()">🛰️ Locate on GIS Map ➔</button>
-                </div>
+                <span style="font-size:24px;">🛡️</span>
             </div>
+            {% else %}
+            <div class="role-banner traveler">
+                <div>
+                    <span class="badge yellow">● TRAVELER PUBLIC SAFETY VIEW</span>
+                    <h3 style="font-size:15px; margin-top:4px;">Civilian Commuter & Driver Navigation Mode</h3>
+                    <p style="font-size:12px; color:#cbd5e1;">Multi-corridor routing, 8-state weather, and active road hazard alerts are active. Non-emergency military fleet telemetry is restricted.</p>
+                </div>
+                <span style="font-size:24px;">🚗</span>
+            </div>
+            {% endif %}
 
             <!-- TAB 1: ROUTE OPTIMIZER & MAP -->
             <div id="tab-finder" class="tab-content active">
                 <section class="route-finder-panel">
-                    <h2 style="font-size:18px; margin-bottom:12px;">🔍 Multi-Corridor Street Routing & AI Safety Engine</h2>
+                    <h2 style="font-size:18px; margin-bottom:14px;">🔍 Select Major North-East Cities for AI Multi-Corridor Safety Routing</h2>
                     <div class="finder-grid">
+                        
+                        <!-- ORIGIN DROPDOWN -->
                         <div class="form-group" style="margin:0;">
-                            <label>📍 Origin</label>
-                            <input type="text" id="route-origin" value="Guwahati, Assam">
+                            <label>📍 Origin (Select Major City)</label>
+                            <select id="route-origin">
+                                <optgroup label="Assam">
+                                    <option value="Guwahati, Assam" selected>Guwahati, Assam (Central Hub)</option>
+                                    <option value="Dispur, Assam">Dispur, Assam (Capital)</option>
+                                    <option value="Silchar, Assam">Silchar, Assam (Barak Valley Gateway)</option>
+                                    <option value="Tezpur, Assam">Tezpur, Assam (Northern Depot)</option>
+                                    <option value="Dibrugarh, Assam">Dibrugarh, Assam (Upper Assam)</option>
+                                    <option value="Jorhat, Assam">Jorhat, Assam</option>
+                                    <option value="Nagaon, Assam">Nagaon, Assam</option>
+                                    <option value="Bongaigaon, Assam">Bongaigaon, Assam</option>
+                                    <option value="Tinsukia, Assam">Tinsukia, Assam</option>
+                                </optgroup>
+                                <optgroup label="Arunachal Pradesh">
+                                    <option value="Itanagar, Arunachal">Itanagar, Arunachal (Capital)</option>
+                                    <option value="Tawang, Arunachal">Tawang, Arunachal (10,000 ft Pass)</option>
+                                    <option value="Bomdila, Arunachal">Bomdila, Arunachal (7,923 ft)</option>
+                                    <option value="Dirang, Arunachal">Dirang, Arunachal</option>
+                                    <option value="Pasighat, Arunachal">Pasighat, Arunachal</option>
+                                    <option value="Ziro, Arunachal">Ziro, Arunachal</option>
+                                    <option value="Bhalukpong, Arunachal">Bhalukpong, Arunachal</option>
+                                </optgroup>
+                                <optgroup label="Meghalaya">
+                                    <option value="Shillong, Meghalaya">Shillong, Meghalaya (Capital)</option>
+                                    <option value="Cherrapunji, Meghalaya">Cherrapunji (Sohra), Meghalaya</option>
+                                    <option value="Jowai, Meghalaya">Jowai, Meghalaya (NH-6 Transit)</option>
+                                    <option value="Tura, Meghalaya">Tura, Meghalaya (Garo Hills)</option>
+                                    <option value="Nongpoh, Meghalaya">Nongpoh, Meghalaya</option>
+                                </optgroup>
+                                <optgroup label="Manipur">
+                                    <option value="Imphal, Manipur">Imphal, Manipur (Capital)</option>
+                                    <option value="Churachandpur, Manipur">Churachandpur, Manipur</option>
+                                    <option value="Jiribam, Manipur">Jiribam, Manipur (Railhead)</option>
+                                    <option value="Senapati, Manipur">Senapati, Manipur (NH-29)</option>
+                                </optgroup>
+                                <optgroup label="Mizoram">
+                                    <option value="Aizawl, Mizoram">Aizawl, Mizoram (Capital)</option>
+                                    <option value="Lunglei, Mizoram">Lunglei, Mizoram</option>
+                                    <option value="Kolasib, Mizoram">Kolasib, Mizoram</option>
+                                    <option value="Champhai, Mizoram">Champhai, Mizoram</option>
+                                </optgroup>
+                                <optgroup label="Nagaland">
+                                    <option value="Kohima, Nagaland">Kohima, Nagaland (Capital)</option>
+                                    <option value="Dimapur, Nagaland">Dimapur, Nagaland (Logistics Silo)</option>
+                                    <option value="Mokokchung, Nagaland">Mokokchung, Nagaland</option>
+                                    <option value="Wokha, Nagaland">Wokha, Nagaland</option>
+                                </optgroup>
+                                <optgroup label="Tripura">
+                                    <option value="Agartala, Tripura">Agartala, Tripura (Capital)</option>
+                                    <option value="Dharmanagar, Tripura">Dharmanagar, Tripura</option>
+                                    <option value="Udaipur, Tripura">Udaipur, Tripura</option>
+                                </optgroup>
+                                <optgroup label="Sikkim">
+                                    <option value="Gangtok, Sikkim">Gangtok, Sikkim (Capital)</option>
+                                    <option value="Rangpo, Sikkim">Rangpo, Sikkim (Checkpost)</option>
+                                    <option value="Namchi, Sikkim">Namchi, Sikkim</option>
+                                    <option value="Pelling, Sikkim">Pelling, Sikkim</option>
+                                </optgroup>
+                                <optgroup label="Regional Gateways">
+                                    <option value="Siliguri, Gateway">Siliguri, Gateway (Chicken's Neck)</option>
+                                </optgroup>
+                            </select>
                         </div>
+
+                        <!-- DESTINATION DROPDOWN -->
                         <div class="form-group" style="margin:0;">
-                            <label>🏁 Destination</label>
-                            <input type="text" id="route-dest" value="Tawang, Arunachal">
+                            <label>🏁 Destination (Select Major City)</label>
+                            <select id="route-dest">
+                                <optgroup label="Arunachal Pradesh">
+                                    <option value="Tawang, Arunachal" selected>Tawang, Arunachal (10,000 ft Base)</option>
+                                    <option value="Itanagar, Arunachal">Itanagar, Arunachal (Capital)</option>
+                                    <option value="Bomdila, Arunachal">Bomdila, Arunachal (7,923 ft)</option>
+                                    <option value="Dirang, Arunachal">Dirang, Arunachal</option>
+                                    <option value="Pasighat, Arunachal">Pasighat, Arunachal</option>
+                                    <option value="Ziro, Arunachal">Ziro, Arunachal</option>
+                                </optgroup>
+                                <optgroup label="Assam">
+                                    <option value="Guwahati, Assam">Guwahati, Assam (Central Hub)</option>
+                                    <option value="Silchar, Assam">Silchar, Assam (Barak Valley Gateway)</option>
+                                    <option value="Tezpur, Assam">Tezpur, Assam</option>
+                                    <option value="Dibrugarh, Assam">Dibrugarh, Assam</option>
+                                    <option value="Jorhat, Assam">Jorhat, Assam</option>
+                                </optgroup>
+                                <optgroup label="Meghalaya">
+                                    <option value="Shillong, Meghalaya">Shillong, Meghalaya (Capital)</option>
+                                    <option value="Cherrapunji, Meghalaya">Cherrapunji (Sohra), Meghalaya</option>
+                                    <option value="Jowai, Meghalaya">Jowai, Meghalaya (NH-6 Transit)</option>
+                                    <option value="Tura, Meghalaya">Tura, Meghalaya</option>
+                                </optgroup>
+                                <optgroup label="Manipur">
+                                    <option value="Imphal, Manipur">Imphal, Manipur (Capital)</option>
+                                    <option value="Churachandpur, Manipur">Churachandpur, Manipur</option>
+                                    <option value="Jiribam, Manipur">Jiribam, Manipur</option>
+                                    <option value="Senapati, Manipur">Senapati, Manipur</option>
+                                </optgroup>
+                                <optgroup label="Mizoram">
+                                    <option value="Aizawl, Mizoram">Aizawl, Mizoram (Capital)</option>
+                                    <option value="Lunglei, Mizoram">Lunglei, Mizoram</option>
+                                    <option value="Kolasib, Mizoram">Kolasib, Mizoram</option>
+                                </optgroup>
+                                <optgroup label="Nagaland">
+                                    <option value="Kohima, Nagaland">Kohima, Nagaland (Capital)</option>
+                                    <option value="Dimapur, Nagaland">Dimapur, Nagaland</option>
+                                    <option value="Mokokchung, Nagaland">Mokokchung, Nagaland</option>
+                                </optgroup>
+                                <optgroup label="Tripura">
+                                    <option value="Agartala, Tripura">Agartala, Tripura (Capital)</option>
+                                    <option value="Dharmanagar, Tripura">Dharmanagar, Tripura</option>
+                                    <option value="Udaipur, Tripura">Udaipur, Tripura</option>
+                                </optgroup>
+                                <optgroup label="Sikkim">
+                                    <option value="Gangtok, Sikkim">Gangtok, Sikkim (Capital)</option>
+                                    <option value="Rangpo, Sikkim">Rangpo, Sikkim</option>
+                                    <option value="Namchi, Sikkim">Namchi, Sikkim</option>
+                                </optgroup>
+                                <optgroup label="Regional Gateways">
+                                    <option value="Siliguri, Gateway">Siliguri, Gateway (Chicken's Neck)</option>
+                                </optgroup>
+                            </select>
                         </div>
-                        <button class="finder-btn" onclick="executeRouteFinder()">⚡ Calculate All Routes</button>
+
+                        <button class="finder-btn" onclick="executeRouteFinder()">⚡ Calculate AI Safe Routes</button>
                     </div>
 
-                    <div style="margin-top:12px; display:flex; gap:6px; flex-wrap:wrap;">
-                        <span class="chip" onclick="setRoute('Guwahati, Assam', 'Tawang, Arunachal')">Guwahati ➔ Tawang</span>
-                        <span class="chip" onclick="setRoute('Guwahati, Assam', 'Imphal, Manipur')">Guwahati ➔ Imphal</span>
-                        <span class="chip" onclick="setRoute('Shillong, Meghalaya', 'Silchar, Assam')">Shillong ➔ Silchar</span>
-                        <span class="chip" onclick="setRoute('Siliguri, Gateway', 'Gangtok, Sikkim')">Siliguri ➔ Gangtok</span>
-                        <span class="chip" onclick="setRoute('Agartala, Tripura', 'Aizawl, Mizoram')">Agartala ➔ Aizawl</span>
-                        <span class="chip" onclick="setRoute('Dimapur, Nagaland', 'Kohima, Nagaland')">Dimapur ➔ Kohima</span>
+                    <!-- Quick Pre-Set Chips -->
+                    <div style="margin-top:14px; display:flex; gap:6px; flex-wrap:wrap;">
+                        <span class="chip" onclick="setSelectRoute('Guwahati, Assam', 'Tawang, Arunachal')">Guwahati ➔ Tawang (Sela Sector)</span>
+                        <span class="chip" onclick="setSelectRoute('Guwahati, Assam', 'Imphal, Manipur')">Guwahati ➔ Imphal (NH-29)</span>
+                        <span class="chip" onclick="setSelectRoute('Shillong, Meghalaya', 'Silchar, Assam')">Shillong ➔ Silchar (NH-6)</span>
+                        <span class="chip" onclick="setSelectRoute('Siliguri, Gateway', 'Gangtok, Sikkim')">Siliguri ➔ Gangtok (NH-10)</span>
+                        <span class="chip" onclick="setSelectRoute('Agartala, Tripura', 'Aizawl, Mizoram')">Agartala ➔ Aizawl</span>
+                        <span class="chip" onclick="setSelectRoute('Dimapur, Nagaland', 'Kohima, Nagaland')">Dimapur ➔ Kohima</span>
                     </div>
                 </section>
 
                 <div id="ai-recommendation-box" style="display:none;" class="recommended-route-banner">
                     <h4 style="font-size:16px; color:#4ade80;">⭐ AI Optimal Disruption-Resistant Route</h4>
                     <p id="rec-name" style="font-size:18px; font-weight:bold; margin:4px 0;"></p>
-                    <div id="rec-rationale" style="font-size:13px; color:#86efac;"></div>
-                </div>
-
-                <div id="routes-cards-container" class="routes-result-grid" style="margin-bottom:24px;"></div>
-
-                <section class="dashboard-grid">
-                    <div class="panel" style="margin:0;">
-                        <div class="panel-header">
-                            <h3>🗺️ Live Street GIS Visualizer</h3>
-                            <span id="route-status-tag" style="font-size:12px; color:#38bdf8; font-weight:bold;">Grid Ready</span>
-                        </div>
-                        <div id="riskMap"></div>
-                    </div>
-
-                    <div class="officer-panel">
-                        <div class="panel-header">
-                            <h3>🚨 Live Ground Alerts & Hazard Stream</h3>
-                            {% if not is_vehicle_owner %}
-                            <button class="chip" style="background:#dc2626; color:white;" onclick="switchTab('tab-officer')">+ Log Report</button>
-                            {% else %}
-                            <span class="badge yellow" style="font-size:10px;">View Only</span>
-                            {% endif %}
-                        </div>
-                        <div class="incident-list-scroll" id="incident-stream">
-                            {% if incidents %}
-                                {% for inc in incidents %}
-                                <div class="alert-item {{ inc.severity }}">
-                                    <strong>{{ inc.type }}</strong>
-                                    <p style="margin:3px 0; font-size:12px;">📍 {{ inc.location }}</p>
-                                    <p style="font-size:12px; color:#94a3b8;">{{ inc.description }}</p>
-                                    <small style="color:#64748b;">Reported by: {{ inc.reported_by }} ({{ inc.time }})</small>
-                                </div>
-                                {% endfor %}
-                            {% endif %}
-                        </div>
-                    </div>
-                </section>
-            </div>
-
-            <!-- TAB 2: WEATHER -->
-            <div id="tab-weather" class="tab-content">
-                <section class="panel">
-                    <div class="panel-header">
-                        <h3>🌦️ Real-World State-Wise Weather Telemetry (Open-Meteo Gateway)</h3>
-                        <span style="font-size:12px; color:#4ade80; font-weight:bold;">● Live Sensor Feed</span>
-                    </div>
-                    <div class="weather-grid-8" id="weather-cards-container">
-                        {% if states_weather %}
-                            {% for sw in states_weather %}
-                            <div class="weather-station-card">
-                                <div style="display:flex; justify-content:space-between; margin-bottom:8px;">
-                                    <b style="color:#38bdf8;">{{ sw.name }} ({{ sw.code }})</b>
-                                    <span class="badge {% if sw.risk == 'LOW' %}green{% elif sw.risk == 'MEDIUM' %}yellow{% else %}red{% endif %}">{{ sw.risk }}</span>
-                                </div>
-                                <div style="font-size:26px; font-weight:800; margin-bottom:6px;">{{ sw.temperature }}°C</div>
-                                <div style="font-size:12px; color:#cbd5e1; line-height:1.6;">
-                                    🌧️ Rain: <b>{{ sw.rain }} mm</b> | 💨 Wind: <b>{{ sw.wind_speed }} km/h</b><br>
-                                    ⚠️ <i>{{ sw.weather_zone }}</i>
-                                </div>
-                            </div>
-                            {% endfor %}
-                        {% endif %}
-                    </div>
-                </section>
-            </div>
-
-            <!-- TAB 3: DISASTER FORM (NOT SHOWN FOR VEHICLE OWNERS) -->
-            {% if not is_vehicle_owner %}
-            <div id="tab-officer" class="tab-content">
-                <section class="panel">
-                    <div class="panel-header">
-                        <h3>📝 Ground Incident & Disaster Dispatch Form</h3>
-                    </div>
-                    <form action="/submit-disaster-report" method="POST">
-                        <div class="form-row">
-                            <div class="form-group">
-                                <label>Officer Name</label>
-                                <input type="text" name="officer_name" value="{{ user }}" required>
-                            </div>
-                            <div class="form-group">
-                                <label>Agency</label>
-                                <select name="agency">
-                                    <option value="Border Roads Organisation (BRO)">Border Roads Organisation (BRO)</option>
-                                    <option value="State Disaster Management (SDMA)">State Disaster Management (SDMA)</option>
-                                </select>
-                            </div>
-                        </div>
-                        <div class="form-row">
-                            <div class="form-group">
-                                <label>Hazard Type</label>
-                                <select name="incident_type">
-                                    <option value="Active Landslide / Mudflow">⛰️ Active Landslide / Mudflow</option>
-                                    <option value="Flash Flooding">🌊 Flash Flooding</option>
-                                    <option value="Highway Accident">🚗 Highway Accident</option>
-                                </select>
-                            </div>
-                            <div class="form-group">
-                                <label>State</label>
-                                <select name="state">
-                                    <option value="Arunachal Pradesh">Arunachal Pradesh</option>
-                                    <option value="Assam">Assam</option>
-                                    <option value="Meghalaya">Meghalaya</option>
-                                    <option value="Nagaland">Nagaland</option>
-                                    <option value="Manipur">Manipur</option>
-                                    <option value="Mizoram">Mizoram</option>
-                                    <option value="Tripura">Tripura</option>
-                                    <option value="Sikkim">Sikkim</option>
-                                </select>
-                            </div>
-                        </div>
-                        <div class="form-group">
-                            <label>Location Marker</label>
-                            <input type="text" name="location" placeholder="e.g. NH-13 near Bomdila Pass" required>
-                        </div>
-                        <div class="form-group">
-                            <label>Description & Convoy Detour</label>
-                            <textarea name="description" rows="3" required></textarea>
-                        </div>
-                        <button type="submit" class="finder-btn" style="background:#dc2626;">🚨 Broadcast Disaster Alert</button>
-                    </form>
-                </section>
-            </div>
-            {% endif %}
-
-            <!-- TAB 4: CHATBOT -->
-            <div id="tab-chatbot" class="tab-content">
-                <section class="panel">
-                    <div class="panel-header">
-                        <h3>🤖 NER-SMARTBOT | AI Logistics Assistant</h3>
-                    </div>
-                    <div class="chatbot-container">
-                        <div class="chat-messages" id="main-chat-messages">
-                            <div class="chat-bubble bot">👋 Namaste! I am NER-SMARTBOT. Ask me about routes, weather advisories, pass closures, or convoys across North East India!</div>
-                        </div>
-                        <div class="chat-input-area">
-                            <input type="text" id="main-chat-input" placeholder="Ask about routes, weather, Sela tunnel, NH-29..." onkeypress="if(event.key==='Enter') sendMessage('main')">
-                            <button class="finder-btn" style="width:auto;" onclick="sendMessage('main')">Send</button>
-                        </div>
-                    </div>
-                </section>
-            </div>
-
-            <!-- TAB 5: FLEET -->
-            <div id="tab-fleet" class="tab-content">
-                <section class="panel">
-                    <div class="panel-header"><h3>🚚 Priority Relief Fleet Telemetry</h3></div>
-                    <table class="table-custom">
-                        <thead>
-                            <tr><th>Vehicle ID</th><th>Carrier</th><th>Cargo</th><th>Transit</th><th>Driver</th><th>Status</th></tr>
-                        </thead>
-                        <tbody>
-                            {% if vehicles %}
-                                {% for v in vehicles %}
-                                <tr>
-                                    <td><b style="color:#38bdf8;">{{ v.id }}</b></td>
-                                    <td>{{ v.carrier }}</td>
-                                    <td><span class="badge {% if v.priority == 'CRITICAL' %}red{% else %}yellow{% endif %}">{{ v.cargo }}</span></td>
-                                    <td>{{ v.origin }} ➔ {{ v.destination }}</td>
-                                    <td>{{ v.driver }}</td>
-                                    <td><span class="badge green">{{ v.status }}</span></td>
-                                </tr>
-                                {% endfor %}
-                            {% endif %}
-                        </tbody>
-                    </table>
-                </section>
-            </div>
-
-            <!-- TAB 6: STATE MATRIX -->
-            <div id="tab-analytics" class="tab-content">
-                <section class="panel">
-                    <div class="panel-header"><h3>📊 8 States Accessibility Matrix</h3></div>
-                    <table class="table-custom">
-                        <thead>
-                            <tr><th>State</th><th>Code</th><th>Corridors</th><th>Accessibility</th><th>Weather Advisory</th></tr>
-                        </thead>
-                        <tbody>
-                            {% if states_weather %}
-                                {% for reg in states_weather %}
-                                <tr>
-                                    <td><b>{{ reg.name }}</b></td>
-                                    <td><span style="color:#38bdf8;">{{ reg.code }}</span></td>
-                                    <td>{{ reg.routes }} Corridors</td>
-                                    <td><b style="color:#4ade80;">{{ reg.accessibility }}</b></td>
-                                    <td>{{ reg.weather_zone }}</td>
-                                </tr>
-                                {% endfor %}
-                            {% endif %}
-                        </tbody>
-                    </table>
-                </section>
-            </div>
-        </main>
-
-        <!-- FLOATING CHAT -->
-        <button id="floating-chat-btn" onclick="toggleFloatingChat()">🤖</button>
-        <div id="floating-chat-window">
-            <div style="background:var(--bg-card-alt); padding:12px; display:flex; justify-content:space-between; align-items:center;">
-                <b>🤖 NER-SMARTBOT</b>
-                <span style="cursor:pointer; font-size:16px;" onclick="toggleFloatingChat()">✖️</span>
-            </div>
-            <div class="chat-messages" id="floating-chat-messages" style="height:380px;">
-                <div class="chat-bubble bot">Ask me anything about routes or weather in the 8 NER states.</div>
-            </div>
-            <div class="chat-input-area">
-                <input type="text" id="floating-chat-input" placeholder="Ask AI..." onkeypress="if(event.key==='Enter') sendMessage('floating')">
-                <button class="finder-btn" style="width:auto; padding:8px 12px;" onclick="sendMessage('floating')">➤</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- JAVASCRIPT LOGIC -->
-    <script>
-        function quickDemoLogin(user, role) {
-            document.getElementById("login-username").value = user;
-            document.getElementById("login-password").value = "sih2026";
-            document.getElementById("login-role").value = role;
-            document.querySelector("#auth-view form").submit();
-        }
-
-        function switchTab(tabId) {
-            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
-            document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
-            const b = document.getElementById('btn-' + tabId); if (b) b.classList.add('active');
-            const c = document.getElementById(tabId); if (c) c.classList.add('active');
-            if (tabId === 'tab-finder' && map) {
-                setTimeout(() => { map.invalidateSize(); }, 250);
-            }
-        }
-
-        function openVehicleModal() { document.getElementById("vehicle-modal-overlay").style.display = "flex"; }
-        function closeVehicleModal() { document.getElementById("vehicle-modal-overlay").style.display = "none"; }
-        function selectVehiclePreset(id) { document.getElementById("modal-vehicle-input").value = id; }
-
-        function locateOwnerVehicle(lat, lon, id) {
-            if(!map) initMap();
-            switchTab('tab-finder');
-            map.flyTo([parseFloat(lat), parseFloat(lon)], 11, { duration: 1.5 });
-        }
-
-        function submitVehicleTrack() {
-            const vId = document.getElementById("modal-vehicle-input").value.trim();
-            if(!vId) return;
-            fetch("/api/track-vehicle", {
-                method: "POST", headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ vehicle_id: vId })
-            })
-            .then(res => res.json())
-            .then(data => {
-                if(!data.success && !data.vehicle) {
-                    alert(data.error || "Vehicle not found");
-                    return;
-                }
-                closeVehicleModal();
-                switchTab('tab-finder');
-                if(!map) initMap();
-                const v = data.vehicle;
-                const vMarker = L.circleMarker([v.lat, v.lon], { radius: 12, color: "#38bdf8", fillColor: "#2563eb", fillOpacity: 1 }).addTo(markerLayerGroup);
-                vMarker.bindPopup(`<b>🚚 ${v.id}</b><br>${v.carrier}<br>Cargo: ${v.cargo}<br>Status: ${v.status}`).openPopup();
-                map.flyTo([v.lat, v.lon], 10, { duration: 1.5 });
-            })
-            .catch(err => console.error("Error tracking vehicle:", err));
-        }
-
-        let map, routeLayerGroup, markerLayerGroup;
-        let activeRoutePolylines = {};
-
-        function initMap() {
-            if (map) return;
-            map = L.map("riskMap", { center: [26.2, 92.8], zoom: 7 });
-            L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
-                attribution: '&copy; OpenStreetMap contributors'
-            }).addTo(map);
-            routeLayerGroup = L.layerGroup().addTo(map);
-            markerLayerGroup = L.layerGroup().addTo(map);
-
-            {% if is_vehicle_owner and assigned_vehicle %}
-            const ownerMarker = L.circleMarker([{{ assigned_vehicle.lat }}, {{ assigned_vehicle.lon }}], {
-                radius: 14, color: "#fbbf24", fillColor: "#f59e0b", fillOpacity: 1, weight: 3
-            }).addTo(markerLayerGroup);
-            ownerMarker.bindPopup(`<b>🚚 My Vehicle: {{ assigned_vehicle.id }}</b><br>{{ assigned_vehicle.carrier }}<br>Cargo: {{ assigned_vehicle.cargo }}<br>Fuel: {{ assigned_vehicle.fuel }} | Temp: {{ assigned_vehicle.temperature }}`).openPopup();
-            map.setView([{{ assigned_vehicle.lat }}, {{ assigned_vehicle.lon }}], 9);
-            {% endif %}
-        }
-
-        function setRoute(o, d) {
-            document.getElementById("route-origin").value = o;
-            document.getElementById("route-dest").value = d;
-            executeRouteFinder();
-        }
-
-        function executeRouteFinder() {
-            if(!map) initMap();
-            const orig = document.getElementById("route-origin").value.trim();
-            const dest = document.getElementById("route-dest").value.trim();
-            if(!orig || !dest) return;
-
-            document.getElementById("route-status-tag").innerText = "⚡ Computing AI Routes...";
-
-            fetch("/api/find-routes", {
-                method: "POST", headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ origin: orig, destination: dest })
-            })
-            .then(res => res.json())
-            .then(data => {
-                if (!data.routes || data.routes.length === 0) {
-                    document.getElementById("route-status-tag").innerText = "⚠️ No corridors available";
-                    return;
-                }
-
-                document.getElementById("route-status-tag").innerText = `✅ Found ${data.routes.length} Corridors`;
-                routeLayerGroup.clearLayers();
-                markerLayerGroup.clearLayers();
-                activeRoutePolylines = {};
-
-                if (data.origin && data.origin.lat) {
-                    L.circleMarker([data.origin.lat, data.origin.lon], { radius: 8, color: "#22c55e", fillColor: "#fff", fillOpacity: 1 })
-                        .addTo(markerLayerGroup)
-                        .bindPopup(`📍 Origin: ${data.origin.name}`).openPopup();
-                }
-                if (data.destination && data.destination.lat) {
-                    L.circleMarker([data.destination.lat, data.destination.lon], { radius: 8, color: "#ef4444", fillColor: "#fff", fillOpacity: 1 })
-                        .addTo(markerLayerGroup)
-                        .bindPopup(`🏁 Destination: ${data.destination.name}`);
-                }
-
-                const cards = document.getElementById("routes-cards-container");
-                cards.innerHTML = "";
-
-                data.routes.forEach((r) => {
-                    const isBest = r.id === data.best_route_id;
-                    const poly = L.polyline(r.coordinates, {
-                        color: isBest ? "#22c55e" : "#38bdf8",
-                        weight: isBest ? 6 : 4,
-                        opacity: 0.9
-                    }).addTo(routeLayerGroup);
-                    activeRoutePolylines[r.id] = poly;
-
-                    const c = document.createElement("div");
-                    c.className = `route-res-card ${isBest ? 'best' : ''}`;
-                    c.onclick = () => {
-                        map.flyToBounds(poly.getBounds(), { padding: [30, 30] });
-                        poly.bindPopup(`<b>${r.name}</b><br>Distance: ${r.distance}<br>ETA: ${r.eta}<br>Safety Score: ${r.safety_score}/100`).openPopup();
-                    };
-                    c.innerHTML = `<b style="color:${isBest ? '#4ade80' : '#fff'}">${r.name}</b><br><span style="font-size:12px; color:#cbd5e1;">Dist: ${r.distance} | ETA: ${r.eta} | Safety: ${r.safety_score}%</span>`;
-                    cards.appendChild(c);
-                });
-
-                const best = data.routes.find(r => r.id === data.best_route_id);
-                if(best) {
-                    document.getElementById("ai-recommendation-box").style.display = "block";
-                    document.getElementById("rec-name").innerText = `${best.name} (${best.distance} - ${best.eta})`;
-                    document.getElementById("rec-rationale").innerText = data.ai_analysis;
-                }
-
-                const group = L.featureGroup(Object.values(activeRoutePolylines));
-                map.flyToBounds(group.getBounds(), { padding: [40, 40] });
-            })
-            .catch(err => {
-                console.error("Route finding error:", err);
-                document.getElementById("route-status-tag").innerText = "⚠️ Network Error";
-            });
-        }
-
-        function toggleFloatingChat() {
-            const w = document.getElementById("floating-chat-window");
-            w.style.display = (w.style.display === "flex") ? "none" : "flex";
-        }
-
-        function sendMessage(ctx) {
-            const input = document.getElementById(ctx === "main" ? "main-chat-input" : "floating-chat-input");
-            const box = document.getElementById(ctx === "main" ? "main-chat-messages" : "floating-chat-messages");
-            const msg = input.value.trim();
-            if(!msg) return;
-
-            box.innerHTML += `<div class="chat-bubble user">${msg}</div>`;
-            input.value = "";
-            box.scrollTop = box.scrollHeight;
-
-            fetch("/api/chat", {
-                method: "POST", headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ message: msg })
-            })
-            .then(res => res.json())
-            .then(d => {
-                const formattedReply = (d.reply || "No response received.")
-                    .replace(/\n/g, '<br>')
-                    .replace(/\*\*(.*?)\*\*/g, '<b>$1</b>');
-                box.innerHTML += `<div class="chat-bubble bot">${formattedReply}</div>`;
-                box.scrollTop = box.scrollHeight;
-            })
-            .catch(err => {
-                box.innerHTML += `<div class="chat-bubble bot" style="color:#f87171;">⚠️ Error contacting AI Assistant.</div>`;
-                box.scrollTop = box.scrollHeight;
-            });
-        }
-
-        window.onload = () => {
-            {% if not is_login and user %}
-            initMap();
-            executeRouteFinder();
-            {% endif %}
-        };
-    </script>
-</body>
-</html>
+                    <div id="rec-rationale
