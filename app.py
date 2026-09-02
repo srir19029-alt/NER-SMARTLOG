@@ -19,7 +19,6 @@ app.jinja_loader = ChoiceLoader([
 
 # 2 Government/Field Officer Credentials + 2 Normal Traveler Credentials
 USERS_DATABASE = {
-    # Higher Government & Field Officers (Full Tactical Access)
     "officer@ner.gov.in": {
         "password": "officer2026",
         "name": "Insp. D. Sharma",
@@ -62,7 +61,6 @@ USERS_DATABASE = {
         "agency": "Border Roads Organisation (BRO)",
         "is_official": True
     },
-    # Normal Vehicle Travelers / Civilians (Public Safety View)
     "traveler@northeast.in": {
         "password": "travel2026",
         "name": "Arunav Das",
@@ -365,42 +363,35 @@ def api_chat():
     msg_low = user_msg.lower()
     gemini_key = os.environ.get("GEMINI_API_KEY", "").strip()
 
-    out_of_scope_reply = (
-        "🛡️ **NER-SMARTBOT Scope Notice:**\n\n"
-        "I am fine-tuned **exclusively for NER-SMARTLOG** (MDoNER / SIH PS-26002). I only answer questions regarding:\n"
-        "• 🛣️ **8-State Highway Corridors & Passes** (e.g. *'Find route from Guwahati to Tawang'*)\n"
-        "• 🌦️ **Real-World 8-State Weather & Rainfall** (e.g. *'Weather in Meghalaya'*)\n"
-        "• ⛰️ **Active Landslides & Flood Alerts** (e.g. *'Landslide status on NH-13'*)\n"
-        "• 🚚 **Emergency Convoy & Relief Fleet Tracking** (e.g. *'Track vehicle NER-MED-01'*)\n"
-        "• 🔐 **Login Credentials & Role Permissions** (e.g. *'What are the login roles?'*)\n\n"
-        "*(I do not answer general trivia, movies, sports, or off-topic programming questions.)*"
-    )
+    out_of_scope_reply = """🛡️ **NER-SMARTBOT Scope Notice:**
+
+I am fine-tuned **exclusively for NER-SMARTLOG** (MDoNER / SIH PS-26002). I only answer questions regarding:
+• 🛣️ **8-State Highway Corridors & Passes** (e.g. *'Find route from Guwahati to Tawang'*)
+• 🌦️ **Real-World 8-State Weather & Rainfall** (e.g. *'Weather in Meghalaya'*)
+• ⛰️ **Active Landslides & Flood Alerts** (e.g. *'Landslide status on NH-13'*)
+• 🚚 **Emergency Convoy & Relief Fleet Tracking** (e.g. *'Track vehicle NER-MED-01'*)
+• 🔐 **Login Credentials & Role Permissions** (e.g. *'What are the login roles?'*)
+
+*(I do not answer general trivia, movies, sports, or off-topic programming questions.)*"""
 
     if gemini_key:
         try:
             all_weather = get_8_states_weather()
-            weather_text = "; ".join([f"{w['name']}: {w['temperature']}°C, {w['rain']}mm rain ({w['condition']}, Risk: {w['risk']})" for w in all_weather])
+            weather_text = "; ".join([f"{w['name']}: {w['temperature']}C, {w['rain']}mm rain ({w['condition']}, Risk: {w['risk']})" for w in all_weather])
             incidents_text = "; ".join([f"{inc['type']} at {inc['location']} (Severity: {inc['severity']})" for inc in incidents])
             convoys_text = "; ".join([f"{v['id']} ({v['cargo']}) moving {v['origin']}->{v['destination']}, Speed: {v['speed']}" for v in vehicles])
 
-            system_prompt = (
-                "You are NER-SMARTBOT, an elite domain-restricted AI copilot for the NER-SMARTLOG portal "
-                "(Ministry of Development of North Eastern Region - MDoNER | SIH PS-26002).\n\n"
-                "STRICT DOMAIN RESTRICTION:\n"
-                "1. You MUST ONLY answer questions about:\n"
-                "   - North East India logistics, highway corridors (NH-10, NH-13, NH-29, NH-37, NH-6, Sela Tunnel, Bomdila Pass).\n"
-                "   - Real-world 8-state weather telemetry (temperature, rainfall, wind, humidity).\n"
-                "   - Active landslides, flood hazards, and road clearance updates.\n"
-                "   - Emergency convoy fleet tracking (vaccines, oxygen, food relief).\n"
-                "   - Website features, login roles (Field Officer vs Normal Traveler).\n"
-                "2. If the user asks ANYTHING outside this website or North East logistics (e.g., movies, celebrities, general coding, sports, cooking), "
-                "   YOU MUST POLITELY REFUSE and state your exclusive focus on NER-SMARTLOG.\n\n"
-                f"CURRENT REAL-TIME CONTEXT:\n"
-                f"• Live Weather: {weather_text}\n"
-                f"• Active Hazards: {incidents_text}\n"
-                f"• Active Convoys: {convoys_text}\n"
-            )
+            system_prompt = f"""You are NER-SMARTBOT, an elite domain-restricted AI copilot for the NER-SMARTLOG portal (Ministry of Development of North Eastern Region - MDoNER | SIH PS-26002).
 
+STRICT DOMAIN RESTRICTION:
+1. You MUST ONLY answer questions about North East India logistics, highway corridors, 8-state weather, landslides/floods, emergency convoys, and login roles.
+2. If the user asks anything outside this portal, politely decline and redirect them.
+
+CURRENT REAL-TIME CONTEXT:
+• Live Weather: {weather_text}
+• Active Hazards: {incidents_text}
+• Active Convoys: {convoys_text}
+"""
             url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key={gemini_key}"
             payload = {"contents": [{"role": "user", "parts": [{"text": f"{system_prompt}\n\nUser Question: {user_msg}"}]}]}
             res = requests.post(url, json=payload, timeout=6)
@@ -437,53 +428,64 @@ def api_chat():
                     st_name = p_val["state"].split()[0]
                     for w in all_weather:
                         if st_name.lower() in w["name"].lower():
-                            matched_state = w; break
-                    if matched_state: break
+                            matched_state = w
+                            break
+                    if matched_state:
+                        break
 
         if matched_state:
-            return jsonify({"reply": (
-                f"🌦️ **Live Weather for {matched_state['name']} ({matched_state['capital']}):**\n\n"
-                f"• 🌡️ **Temperature:** {matched_state['temperature']}°C\n"
-                f"• 🌧️ **Precipitation:** {matched_state['rain']} mm/hr\n"
-                f"• 💨 **Wind Speed:** {matched_state['wind_speed']} km/h\n"
-                f"• 💧 **Humidity:** {matched_state['humidity']}%\n"
-                f"• ⛅ **Condition:** {matched_state['condition']}\n"
-                f"• ⚠️ **Road Risk Level:** **{matched_state['risk']}** ({matched_state['weather_zone']})"
-            )})
+            reply = f"""🌦️ **Live Weather for {matched_state['name']} ({matched_state['capital']}):**
+
+• 🌡️ **Temperature:** {matched_state['temperature']}°C
+• 🌧️ **Precipitation:** {matched_state['rain']} mm/hr
+• 💨 **Wind Speed:** {matched_state['wind_speed']} km/h
+• 💧 **Humidity:** {matched_state['humidity']}%
+• ⛅ **Condition:** {matched_state['condition']}
+• ⚠️ **Road Risk Level:** **{matched_state['risk']}** ({matched_state['weather_zone']})"""
+            return jsonify({"reply": reply})
         else:
             lines = [f"• **{w['name']}:** {w['temperature']}°C | {w['rain']} mm rain ({w['condition']}) — Risk: **{w['risk']}**" for w in all_weather]
-            return jsonify({"reply": "🌦️ **Real-Time 8-State Weather Telemetry (Open-Meteo Gateway):**\n\n" + "\n".join(lines)})
+            reply = "🌦️ **Real-Time 8-State Weather Telemetry (Open-Meteo Gateway):**\n\n" + "\n".join(lines)
+            return jsonify({"reply": reply})
 
     if any(w in msg_low for w in ["track", "convoy", "truck", "med", "oxygen", "grain", "fleet", "vehicle"]):
         matched_v = None
         for v in vehicles:
             if v["id"].lower() in msg_low or v["carrier"].lower() in msg_low or v["cargo"].lower() in msg_low:
-                matched_v = v; break
+                matched_v = v
+                break
         
         if matched_v:
-            return jsonify({"reply": (
-                f"🚚 **Live Convoy Telemetry [{matched_v['id']}]:**\n\n"
-                f"• 📦 **Carrier & Cargo:** {matched_v['carrier']} ({matched_v['cargo']})\n"
-                f"• 🚨 **Priority Status:** **{matched_v['priority']}** (Emergency Mode: {'YES ⚠️' if matched_v['is_emergency'] else 'NO'})\n"
-                f"• 🛣️ **Route Corridor:** {matched_v['origin']} ➔ {matched_v['destination']}\n"
-                f"• ⚡ **Current Speed:** {matched_v['speed']} (ETA: {matched_v['eta']})\n"
-                f"• 👨‍✈️ **Assigned Driver:** {matched_v['driver']}\n"
-                f"• 📍 **Status:** {matched_v['status']}\n"
-                f"• ❄️ **Cold-Chain Temp:** {matched_v.get('temperature', 'N/A')}"
-            )})
+            reply = f"""🚚 **Live Convoy Telemetry [{matched_v['id']}]:**
+
+• 📦 **Carrier & Cargo:** {matched_v['carrier']} ({matched_v['cargo']})
+• 🚨 **Priority Status:** **{matched_v['priority']}**
+• 🛣️ **Route Corridor:** {matched_v['origin']} ➔ {matched_v['destination']}
+• ⚡ **Current Speed:** {matched_v['speed']} (ETA: {matched_v['eta']})
+• 👨‍✈️ **Assigned Driver:** {matched_v['driver']}
+• 📍 **Status:** {matched_v['status']}
+• ❄️ **Cold-Chain Temp:** {matched_v.get('temperature', 'N/A')}"""
+            return jsonify({"reply": reply})
         else:
             lines = [f"• 🚚 **{v['id']}** ({v['cargo']}): {v['origin']} ➔ {v['destination']} | Speed: {v['speed']} | Status: *{v['status']}*" for v in vehicles]
-            return jsonify({"reply": "🛰️ **Live Active Convoys in North East Grid:**\n\n" + "\n".join(lines) + "\n\n💡 *Note: Detailed live GPS coordinates are restricted to Field Officers & Higher Officials.*"})
+            reply = "🛰️ **Live Active Convoys in North East Grid:**\n\n" + "\n".join(lines)
+            return jsonify({"reply": reply})
 
     if any(w in msg_low for w in ["landslide", "flood", "disaster", "hazard", "incident", "bro", "sdma", "block"]):
         lines = [f"• ⚠️ **[{inc['severity']}] {inc['type']}** at {inc['location']}\n  Status: {inc['description']} (Reported: {inc['time']})" for inc in incidents]
-        return jsonify({"reply": f"🚨 **Active Field Hazards Broadcast ({len(incidents)} Active):**\n\n" + "\n\n".join(lines)})
+        reply = f"🚨 **Active Field Hazards Broadcast ({len(incidents)} Active):**\n\n" + "\n\n".join(lines)
+        return jsonify({"reply": reply})
 
     if any(w in msg_low for w in ["sela", "sela tunnel", "sela pass"]):
-        return jsonify({"reply": "🏔️ **Sela Corridor Strategic Status (Arunachal - 13,700 ft):**\n\n• **Sela Tunnel:** ✅ **Operational & All-Weather Safe.**\n• **Recommendation:** Relief convoys to Tawang Hospital route via Sela Tunnel to bypass heavy snow zones."})
+        reply = """🏔️ **Sela Corridor Strategic Status (Arunachal - 13,700 ft):**
+
+• **Sela Tunnel:** ✅ **Operational & All-Weather Safe.**
+• **Recommendation:** Relief convoys to Tawang Hospital route via Sela Tunnel to bypass heavy snow zones."""
+        return jsonify({"reply": reply})
 
     if any(w in msg_low for w in ["bomdila", "nh-13", "dirang"]):
-        return jsonify({"reply": "⛰️ **NH-13 Bomdila Pass KM 142 Alert:** Active mudflow detected. Excavators deployed by BRO Unit 4. AI suggests taking the Kalaktang Bypass corridor."})
+        reply = "⛰️ **NH-13 Bomdila Pass KM 142 Alert:** Active mudflow detected. Excavators deployed by BRO Unit 4. AI suggests taking the Kalaktang Bypass corridor."
+        return jsonify({"reply": reply})
 
     if "from" in msg_low and "to" in msg_low:
         parts = msg_low.split("to")
@@ -492,6 +494,18 @@ def api_chat():
         return jsonify({"reply": f"🛣️ **AI Corridor Computed for {orig} ➔ {dest}:** Multi-corridor terrain gradient and rainfall risk evaluated. Use the dropdown selectors on the Mission Control Map to visualize the safest route!"})
 
     if any(w in msg_low for w in ["login", "credential", "role", "officer", "traveler", "permission"]):
-        return jsonify({"reply": (
-            "🔐 **NER-SMARTLOG Role & Access System:**\n\n"
-            "1. 👮 **Field Officer / Govt Official:** Full tactical
+        reply = """🔐 **NER-SMARTLOG Role & Access System:**
+
+1. 👮 **Field Officer / Govt Official:** Full tactical mission control, live GPS tracking of all convoys, road clearance logging, and disaster broadcast authority.
+   • Email: `officer@ner.gov.in` (Password: `officer2026`)
+   • Email: `commander@ner.gov.in` (Password: `govt2026`)
+
+2. 🚗 **Normal Vehicle Traveler:** Public safety view with multi-corridor route optimizer, live 8-state weather feeds, and active disaster alerts.
+   • Email: `traveler@northeast.in` (Password: `travel2026`)
+   • Email: `driver@nerlog.in` (Password: `driver2026`)"""
+        return jsonify({"reply": reply})
+
+    if any(w in msg_low for w in ["what is", "about", "website", "project", "purpose", "who are you"]):
+        reply = """🚚 **About NER-SMARTLOG (SIH PS-26002):**
+
+An **AI-Powered Street Logistics & Real-Time Hazard Intelligence System**
