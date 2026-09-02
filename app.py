@@ -6,22 +6,17 @@ from datetime import datetime
 from flask import Flask, render_template, request, jsonify, redirect, url_for, session
 from jinja2 import ChoiceLoader, FileSystemLoader
 
-# Automatic path detection
 BASE_DIR = os.path.abspath(os.path.dirname(__file__))
 
 app = Flask(__name__, template_folder='templates')
 app.secret_key = os.environ.get("SECRET_KEY", "ner-smartlog-sih2026-production-secret")
 
-# Search both 'templates/' subfolder AND current directory so index.html works anywhere
 app.jinja_loader = ChoiceLoader([
     FileSystemLoader(os.path.join(BASE_DIR, 'templates')),
     FileSystemLoader(BASE_DIR),
     FileSystemLoader('.')
 ])
 
-# =============================================================================
-# 1. USER CREDENTIALS & ROLE MANAGEMENT
-# =============================================================================
 # 2 Government/Field Officer Credentials + 2 Normal Traveler Credentials
 USERS_DATABASE = {
     # Higher Government & Field Officers (Full Tactical Access)
@@ -37,6 +32,34 @@ USERS_DATABASE = {
         "name": "Commander R. Barua",
         "role": "Higher Government Official (MDoNER)",
         "agency": "MDoNER Disaster Control Cell",
+        "is_official": True
+    },
+    "insp. d. sharma": {
+        "password": "sih2026",
+        "name": "Insp. D. Sharma",
+        "role": "Field Patrol Officer (BRO)",
+        "agency": "Border Roads Organisation (BRO)",
+        "is_official": True
+    },
+    "commander r. barua": {
+        "password": "sih2026",
+        "name": "Commander R. Barua",
+        "role": "Higher Government Official (MDoNER)",
+        "agency": "MDoNER Disaster Control Cell",
+        "is_official": True
+    },
+    "director s. roy": {
+        "password": "sih2026",
+        "name": "Director S. Roy",
+        "role": "State Disaster Controller (SDMA)",
+        "agency": "SDMA Disaster Control Cell",
+        "is_official": True
+    },
+    "bro-officer-44": {
+        "password": "sih2026",
+        "name": "BRO-OFFICER-44",
+        "role": "Field Patrol Officer (BRO)",
+        "agency": "Border Roads Organisation (BRO)",
         "is_official": True
     },
     # Normal Vehicle Travelers / Civilians (Public Safety View)
@@ -56,9 +79,6 @@ USERS_DATABASE = {
     }
 }
 
-# =============================================================================
-# 2. 8 NORTH-EASTERN STATES & EXPANDED MAJOR CITIES GAZETTEER
-# =============================================================================
 REGIONS = [
     {"name": "Assam", "code": "AS", "capital": "Dispur / Guwahati", "lat": 26.1445, "lon": 91.7362, "routes": 34, "accessibility": "95%", "weather_zone": "Brahmaputra Valley Corridor"},
     {"name": "Arunachal Pradesh", "code": "AR", "capital": "Itanagar", "lat": 27.0844, "lon": 93.6053, "routes": 18, "accessibility": "58%", "weather_zone": "High Himalayan Landslide Prone"},
@@ -70,7 +90,6 @@ REGIONS = [
     {"name": "Sikkim", "code": "SK", "capital": "Gangtok", "lat": 27.3389, "lon": 88.6065, "routes": 10, "accessibility": "90%", "weather_zone": "Teesta River Highway Sector"}
 ]
 
-# Major Cities across all 8 States + Siliguri Gateway
 NER_PLACES = {
     # Assam
     "Guwahati, Assam": {"lat": 26.1445, "lon": 91.7362, "state": "Assam", "elev": "180 ft"},
@@ -144,9 +163,6 @@ def geocode_place(query):
             return key, val["lat"], val["lon"], val["elev"]
     return "Guwahati, Assam", 26.1445, 91.7362, "180 ft"
 
-# =============================================================================
-# 3. CONVOY FLEET & EMERGENCY HAZARD TELEMETRY
-# =============================================================================
 vehicles = [
     {
         "id": "NER-MED-01", "carrier": "Emergency Vaccine Express",
@@ -206,9 +222,6 @@ incidents = [
     }
 ]
 
-# =============================================================================
-# 4. WEATHER TELEMETRY (OPEN-METEO REAL-TIME GATEWAY)
-# =============================================================================
 def get_8_states_weather():
     state_weather = []
     for reg in REGIONS:
@@ -250,9 +263,6 @@ def calculate_risk(rainfall, landslide, road, traffic, historical, travel_time):
     level = "LOW" if score <= 30 else ("MEDIUM" if score <= 60 else ("HIGH" if score <= 80 else "CRITICAL"))
     return round(score, 1), level
 
-# =============================================================================
-# 5. REST APIS (ROUTE FINDER, VEHICLE TRACKER, DOMAIN CHATBOT)
-# =============================================================================
 @app.route("/api/find-routes", methods=["POST"])
 def find_routes():
     data = request.get_json(silent=True) or {}
@@ -345,9 +355,6 @@ def track_vehicle():
     }
     return jsonify({"status": "found", "vehicle": gen_vehicle, "is_official": is_official})
 
-# =============================================================================
-# 6. FINE-TUNED DOMAIN-RESTRICTED CHATBOT
-# =============================================================================
 @app.route("/api/chat", methods=["POST"])
 def api_chat():
     data = request.get_json(silent=True) or {}
@@ -369,7 +376,6 @@ def api_chat():
         "*(I do not answer general trivia, movies, sports, or off-topic programming questions.)*"
     )
 
-    # 1. Real LLM (Gemini) with Strict Domain Guardrails
     if gemini_key:
         try:
             all_weather = get_8_states_weather()
@@ -405,7 +411,6 @@ def api_chat():
         except Exception as e:
             print(f"Gemini API fallback: {e}")
 
-    # 2. Strict Domain Keyword & Logic Engine (Built-In Zero-Error Fallback)
     domain_keywords = [
         "ner", "smartlog", "route", "corridor", "highway", "pass", "sela", "bomdila", "weather", "rain",
         "temperature", "wind", "humidity", "assam", "arunachal", "meghalaya", "manipur", "mizoram", "nagaland",
@@ -418,7 +423,6 @@ def api_chat():
     if not any(k in msg_low for k in domain_keywords) and len(msg_low.split()) > 1:
         return jsonify({"reply": out_of_scope_reply})
 
-    # Weather Queries
     if any(w in msg_low for w in ["weather", "rain", "temperature", "temp", "climate", "forecast", "humidity", "wind"]):
         all_weather = get_8_states_weather()
         matched_state = None
@@ -450,7 +454,6 @@ def api_chat():
             lines = [f"• **{w['name']}:** {w['temperature']}°C | {w['rain']} mm rain ({w['condition']}) — Risk: **{w['risk']}**" for w in all_weather]
             return jsonify({"reply": "🌦️ **Real-Time 8-State Weather Telemetry (Open-Meteo Gateway):**\n\n" + "\n".join(lines)})
 
-    # Convoy Tracking Queries
     if any(w in msg_low for w in ["track", "convoy", "truck", "med", "oxygen", "grain", "fleet", "vehicle"]):
         matched_v = None
         for v in vehicles:
@@ -472,131 +475,23 @@ def api_chat():
             lines = [f"• 🚚 **{v['id']}** ({v['cargo']}): {v['origin']} ➔ {v['destination']} | Speed: {v['speed']} | Status: *{v['status']}*" for v in vehicles]
             return jsonify({"reply": "🛰️ **Live Active Convoys in North East Grid:**\n\n" + "\n".join(lines) + "\n\n💡 *Note: Detailed live GPS coordinates are restricted to Field Officers & Higher Officials.*"})
 
-    # Active Landslides & Flood Hazards
     if any(w in msg_low for w in ["landslide", "flood", "disaster", "hazard", "incident", "bro", "sdma", "block"]):
         lines = [f"• ⚠️ **[{inc['severity']}] {inc['type']}** at {inc['location']}\n  Status: {inc['description']} (Reported: {inc['time']})" for inc in incidents]
         return jsonify({"reply": f"🚨 **Active Field Hazards Broadcast ({len(incidents)} Active):**\n\n" + "\n\n".join(lines)})
 
-    # Strategic Mountain Passes
     if any(w in msg_low for w in ["sela", "sela tunnel", "sela pass"]):
         return jsonify({"reply": "🏔️ **Sela Corridor Strategic Status (Arunachal - 13,700 ft):**\n\n• **Sela Tunnel:** ✅ **Operational & All-Weather Safe.**\n• **Recommendation:** Relief convoys to Tawang Hospital route via Sela Tunnel to bypass heavy snow zones."})
 
     if any(w in msg_low for w in ["bomdila", "nh-13", "dirang"]):
         return jsonify({"reply": "⛰️ **NH-13 Bomdila Pass KM 142 Alert:** Active mudflow detected. Excavators deployed by BRO Unit 4. AI suggests taking the Kalaktang Bypass corridor."})
 
-    # Route Guidance
     if "from" in msg_low and "to" in msg_low:
         parts = msg_low.split("to")
         orig = parts[0].replace("from", "").replace("find route", "").strip().title()
         dest = parts[1].strip().title()
         return jsonify({"reply": f"🛣️ **AI Corridor Computed for {orig} ➔ {dest}:** Multi-corridor terrain gradient and rainfall risk evaluated. Use the dropdown selectors on the Mission Control Map to visualize the safest route!"})
 
-    # Login & Role Explanations
     if any(w in msg_low for w in ["login", "credential", "role", "officer", "traveler", "permission"]):
         return jsonify({"reply": (
             "🔐 **NER-SMARTLOG Role & Access System:**\n\n"
-            "1. 👮 **Field Officer / Govt Official:** Full tactical mission control, live GPS tracking of all convoys, road clearance logging, and disaster broadcast authority.\n"
-            "   • Email: `officer@ner.gov.in` (Password: `officer2026`)\n"
-            "   • Email: `commander@ner.gov.in` (Password: `govt2026`)\n\n"
-            "2. 🚗 **Normal Vehicle Traveler:** Public safety view with multi-corridor route optimizer, live 8-state weather feeds, and active disaster alerts.\n"
-            "   • Email: `traveler@northeast.in` (Password: `travel2026`)\n"
-            "   • Email: `driver@nerlog.in` (Password: `driver2026`)"
-        )})
-
-    # About & Purpose
-    if any(w in msg_low for w in ["what is", "about", "website", "project", "purpose", "who are you"]):
-        return jsonify({"reply": (
-            "🚚 **About NER-SMARTLOG (SIH PS-26002):**\n\n"
-            "An **AI-Powered Street Logistics & Real-Time Hazard Intelligence System** built for **MDoNER** (Ministry of Development of North Eastern Region).\n\n"
-            "**Core Features:**\n"
-            "• 🛣️ **Multi-Corridor Route Optimizer:** Computes terrain & rain-adjusted safest mountain routes across all major North-East cities.\n"
-            "• 🌦️ **8-State Live Weather:** Continuous meteorological telemetry via Open-Meteo.\n"
-            "• 🛰️ **Priority Relief Fleet Telemetry:** Tactical GPS tracking for emergency vaccine & oxygen trucks (restricted to authorized officials).\n"
-            "• 🚨 **BRO Field Incident Stream:** Verified disaster alerts and road clearance timelines."
-        )})
-
-    # Greetings & Default
-    return jsonify({"reply": (
-        "👋 **Namaste! I am NER-SMARTBOT**, your AI Logistics & Hazard Assistant for North East India.\n\n"
-        "Ask me anything about:\n"
-        "• 🌦️ *'Weather in Meghalaya'* or *'Weather in Sikkim'*\n"
-        "• 🛣️ *'Find route from Guwahati to Tawang'*\n"
-        "• 🚚 *'Track vehicle NER-MED-01'*\n"
-        "• 🚨 *'Show active landslides on NH-13'*\n"
-        "• 🔐 *'What are the login roles and credentials?'*"
-    )})
-
-@app.route("/submit-disaster-report", methods=["POST"])
-def submit_disaster_report():
-    if not session.get("is_official", False):
-        return ("Unauthorized: Only Field Officers & Government Officials can broadcast disaster alerts.", 403)
-
-    new_inc = {
-        "id": f"DIS-{len(incidents) + 9021}",
-        "type": request.form.get("incident_type", "Active Landslide / Mudflow"),
-        "location": f"{request.form.get('location', 'Himalayan Pass')}, {request.form.get('state', 'NER')}",
-        "severity": request.form.get("severity", "HIGH"),
-        "time": "Just now (Verified Official Report)",
-        "reported_by": f"{session.get('user', 'Officer')} ({session.get('agency', 'BRO')})",
-        "description": request.form.get("description", "Roadway hazard logged."),
-        "lat": 27.2640, "lon": 92.4240
-    }
-    incidents.insert(0, new_inc)
-    return redirect(url_for("home"))
-
-# =============================================================================
-# 7. AUTHENTICATION & VIEWS
-# =============================================================================
-@app.route("/login", methods=["GET", "POST"])
-def login_page():
-    error = None
-    if request.method == "POST":
-        email = request.form.get("email", "").strip()
-        password = request.form.get("password", "").strip()
-
-        user_info = USERS_DATABASE.get(email)
-        if user_info and user_info["password"] == password:
-            session["user"] = user_info["name"]
-            session["email"] = email
-            session["role"] = user_info["role"]
-            session["agency"] = user_info["agency"]
-            session["is_official"] = user_info["is_official"]
-            return redirect(url_for("home"))
-        else:
-            error = "Invalid email or password. Please use the credentials shown below."
-
-    return render_template("index.html", is_login=True, login_error=error, places=NER_PLACES)
-
-@app.route("/logout")
-def logout():
-    session.clear()
-    return redirect(url_for("login_page"))
-
-@app.route("/")
-def home():
-    if "user" not in session:
-        return redirect(url_for("login_page"))
-
-    is_official = session.get("is_official", False)
-    states_weather = get_8_states_weather()
-    visible_vehicles = vehicles if is_official else [v for v in vehicles if v.get("is_emergency", False)]
-
-    return render_template(
-        "index.html",
-        is_login=False,
-        user=session.get("user", "Duty Officer"),
-        role=session.get("role", "Field Patrol Officer"),
-        agency=session.get("agency", "Border Roads Organisation"),
-        is_official=is_official,
-        states_weather=states_weather,
-        vehicles=visible_vehicles,
-        all_vehicles=vehicles,
-        incidents=incidents,
-        places=NER_PLACES,
-        timestamp=datetime.now().strftime("%d-%b-%Y %H:%M:%S IST")
-    )
-
-if __name__ == "__main__":
-    port = int(os.environ.get("PORT", 5000))
-    print(f"🚀 NER-SMARTLOG Mission Control running on http://127.0.0.1:{port}")
-    app.run(host="0.0.0.0", port=port, debug=True)
+            "1. 👮 **Field Officer / Govt Official:** Full tactical
